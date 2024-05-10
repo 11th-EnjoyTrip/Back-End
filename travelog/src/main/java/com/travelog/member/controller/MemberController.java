@@ -1,6 +1,6 @@
-package com.travelog.travelog.controller;
+package com.travelog.member.controller;
 
-import com.travelog.travelog.domain.Member;
+import com.travelog.member.domain.Member;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

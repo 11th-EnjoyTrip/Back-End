@@ -1,4 +1,4 @@
-package com.travelog.travelog.dto;
+package com.travelog.member.dto;
 
 import lombok.Data;
 
