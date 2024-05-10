@@ -1,4 +1,4 @@
-package com.travelog.travelog.domain;
+package com.travelog.member.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

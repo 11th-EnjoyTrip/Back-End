@@ -1,6 +1,6 @@
-package com.travelog.travelog.repository;
+package com.travelog.member.repository;
 
-import com.travelog.travelog.domain.Member;
+import com.travelog.member.domain.Member;
 
 public interface MemberRepository {
 
