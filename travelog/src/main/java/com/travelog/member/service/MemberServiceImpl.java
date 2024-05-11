@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -21,7 +22,12 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public List<MemberDto> getMembers() {
+    public List<MemberDto> getMembers() throws Exception {
         return  memberDao.getMembers();
+    }
+
+    @Override
+    public MemberDto memberInfo(String memberId) throws SQLException {
+        return memberDao.memberInfo(memberId);
     }
 }
