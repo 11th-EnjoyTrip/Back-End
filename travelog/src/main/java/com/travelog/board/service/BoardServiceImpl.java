@@ -5,6 +5,7 @@ import com.travelog.board.dto.BoardDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,10 @@ public class BoardServiceImpl implements BoardService{
         return boardDao.listArticle();
     }
 
-
+    @Override
+    public List<BoardDto> searchArticle(String word) throws Exception {
+        return boardDao.searchArticle(word);
+    }
 
     @Override
     public void writeArticle(BoardDto boardDto) throws Exception {

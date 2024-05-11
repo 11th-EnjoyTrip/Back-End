@@ -37,7 +37,35 @@ public class BoardController {
             return exceptionHandling(e);
         }
     }
-
+    @GetMapping("/view/{articleno}")
+    @Transactional
+    public ResponseEntity<?> write(@PathVariable("articleno") int articleNo) {
+        try {
+            BoardDto boardDto = boardService.getArticle(articleNo);
+            if(boardDto != null) {
+                boardService.updateHit(articleNo);
+                return new ResponseEntity<BoardDto>(boardDto, HttpStatus.OK);
+            }else {
+                return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+    @GetMapping("/search/{word}")
+    @Transactional
+    public ResponseEntity<?> search(@PathVariable("word") String word){
+        try{
+            List<BoardDto> list = boardService.searchArticle(word);
+            if(list != null && !list.isEmpty()){
+                return new ResponseEntity<>(list, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+        }catch(Exception e){
+            return exceptionHandling(e);
+        }
+    }
     @PostMapping("/write")
     @Transactional
     public ResponseEntity<?> write(@RequestBody BoardDto boardDto) {
@@ -54,21 +82,7 @@ public class BoardController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
-    @GetMapping("/view/{articleno}")
-    @Transactional
-    public ResponseEntity<?> write(@PathVariable("articleno") int articleNo) {
-        try {
-            BoardDto boardDto = boardService.getArticle(articleNo);
-            if(boardDto != null) {
-                boardService.updateHit(articleNo);
-                return new ResponseEntity<BoardDto>(boardDto, HttpStatus.OK);
-            }else {
-                return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-            }
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
+
 
     @PutMapping("/{articleno}")
     @Transactional
