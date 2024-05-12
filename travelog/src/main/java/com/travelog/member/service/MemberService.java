@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface MemberService {
     List<MemberDto> getMembers() throws Exception;
-    public MemberDto memberInfo(String memberId) throws SQLException;
+    MemberDto memberInfo(String memberId) throws SQLException;
 
 }
