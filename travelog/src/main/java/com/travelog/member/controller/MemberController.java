@@ -3,10 +3,10 @@ package com.travelog.member.controller;
 import com.travelog.member.dto.MemberDto;
 import com.travelog.member.service.MemberService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.session.Session;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -55,7 +55,8 @@ public class MemberController {
             if(memberDto == null){
                 throw new Exception("로그인 실패");
             }
-            session.setAttribute("loginMember", memberDto);
+            session.setAttribute("id",memberDto);
+            System.out.println(session.getId());
             resultMap.put("message", "success");
             status = HttpStatus.OK;
         }catch(Exception e){
