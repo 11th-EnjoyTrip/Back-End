@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.*;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface BoardDao {
@@ -13,7 +12,7 @@ public interface BoardDao {
     // Create Article
     @Insert(value = "insert into board (writer, title, content) values (#{writer},#{title},#{content})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    int writeArticle(BoardDto boardDto) throws SQLException;
+    void writeArticle(BoardDto boardDto) throws SQLException;
 
     // Select ArticleList
     @Select(value = "select * from board order by id")

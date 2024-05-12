@@ -13,6 +13,6 @@ public interface MemberDao {
     List<MemberDto> getMembers() throws SQLException;
 
     @Select(value = "SELECT * FROM member WHERE id = #{memberId}")
-    public MemberDto memberInfo(String memberId) throws SQLException;
+    MemberDto memberInfo(String memberId) throws SQLException;
 
 }

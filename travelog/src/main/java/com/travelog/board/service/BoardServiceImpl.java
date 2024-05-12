@@ -5,14 +5,12 @@ import com.travelog.board.dto.BoardDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class BoardServiceImpl implements BoardService{
 
-    private BoardDao boardDao;
+    private final BoardDao boardDao;
 
     @Autowired
     private BoardServiceImpl(BoardDao boardDao) {
