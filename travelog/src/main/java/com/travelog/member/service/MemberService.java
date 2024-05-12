@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface MemberService {
     List<MemberDto> getMembers() throws Exception;
-    MemberDto memberInfo(String memberId) throws SQLException;
-
+    MemberDto getById(String memberId) throws SQLException;
+    MemberDto regist(MemberDto memberDto) throws SQLException;
+    MemberDto login(String id, String password) throws SQLException;
 }

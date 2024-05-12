@@ -1,5 +1,6 @@
 package com.travelog.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,4 +12,5 @@ public class MemberDto {
     private String password;
     private String name;
     private String email;
+    private String location;
 }
