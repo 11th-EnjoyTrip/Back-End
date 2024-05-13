@@ -13,7 +13,7 @@ public interface MemberDao {
     @Select(value = "SELECT * FROM member")
     List<MemberDto> getMembers() throws SQLException;
     @Select(value = "INSERT INTO member (id, password, name, email, location) values (#{id},#{password},#{name},#{email},#{location})")
-    MemberDto regist(MemberDto memberDto) throws SQLException;
+    void regist(MemberDto memberDto) throws SQLException;
     @Select(value = "SELECT * FROM member WHERE id = #{memberId}")
     MemberDto getById(String memberId) throws SQLException;
     @Select(value = "SELECT * FROM member WHERE id = #{id} and password = #{password}")
