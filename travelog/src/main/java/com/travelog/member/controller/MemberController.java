@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -28,18 +29,22 @@ public class MemberController {
     }
 
     @PostMapping("/regist")
+    @Transactional
     public ResponseEntity<?> regist(@RequestBody MemberDto registMemberDto) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status;
-        try {
-            System.out.println("controller");
-            status = memberService.regist(registMemberDto);
-            resultMap.put("message", "success");
-//            status = HttpStatus.ACCEPTED;
-        } catch (Exception e) {
-            resultMap.put("message", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+        status = memberService.regist(registMemberDto);
+//        try {
+//            status = memberService.regist(registMemberDto);
+//            if(status == HttpStatus.CREATED) {
+//                resultMap.put("message", "success");
+//            }else if ( status == HttpStatus.CONFLICT) {
+//                resultMap.put("message", "duplicate");
+//            }
+//        } catch (Exception e) {
+//            resultMap.put("message", e.getMessage());
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//        }
         return new ResponseEntity<>(resultMap, status);
     }
 

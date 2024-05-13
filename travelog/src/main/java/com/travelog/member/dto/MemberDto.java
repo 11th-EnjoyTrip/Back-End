@@ -15,4 +15,5 @@ public class MemberDto implements Serializable {
     private String name;
     private String email;
     private String location;
+    private String nickname;
 }
