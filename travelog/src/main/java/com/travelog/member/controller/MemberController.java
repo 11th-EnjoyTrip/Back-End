@@ -33,18 +33,18 @@ public class MemberController {
     public ResponseEntity<?> regist(@RequestBody MemberDto registMemberDto) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status;
-        status = memberService.regist(registMemberDto);
-//        try {
-//            status = memberService.regist(registMemberDto);
-//            if(status == HttpStatus.CREATED) {
-//                resultMap.put("message", "success");
-//            }else if ( status == HttpStatus.CONFLICT) {
-//                resultMap.put("message", "duplicate");
-//            }
-//        } catch (Exception e) {
-//            resultMap.put("message", e.getMessage());
-//            status = HttpStatus.INTERNAL_SERVER_ERROR;
-//        }
+//        status = memberService.regist(registMemberDto);
+        try {
+            status = memberService.regist(registMemberDto);
+            if(status == HttpStatus.CREATED) {
+                resultMap.put("message", "success");
+            }else if ( status == HttpStatus.CONFLICT) {
+                resultMap.put("message", "duplicate");
+            }
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
         return new ResponseEntity<>(resultMap, status);
     }
 
