@@ -6,12 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class BoardServiceImpl implements BoardService{
 
-    private BoardDao boardDao;
+    private final BoardDao boardDao;
 
     @Autowired
     private BoardServiceImpl(BoardDao boardDao) {
@@ -22,7 +21,10 @@ public class BoardServiceImpl implements BoardService{
         return boardDao.listArticle();
     }
 
-
+    @Override
+    public List<BoardDto> searchArticle(String word) throws Exception {
+        return boardDao.searchArticle(word);
+    }
 
     @Override
     public void writeArticle(BoardDto boardDto) throws Exception {

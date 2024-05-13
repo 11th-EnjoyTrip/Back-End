@@ -2,12 +2,16 @@ package com.travelog.member.controller;
 
 import com.travelog.member.dto.MemberDto;
 import com.travelog.member.service.MemberService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.session.Session;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value= "member")
@@ -20,8 +24,61 @@ public class MemberController {
     }
 
     @GetMapping("/all")
-    public List<MemberDto> all() {
+    public List<MemberDto> all() throws Exception {
         return memberService.getMembers();
     }
+    @PostMapping("/regist")
+    public ResponseEntity<?> regist(@RequestBody MemberDto registMemberDto) throws Exception{
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status;
+        try{
+            if(memberService.getById(registMemberDto.getId()) != null){
+                resultMap.put("message", "존재하는 ID입니다.");
+                status = HttpStatus.NOT_ACCEPTABLE;
+                return new ResponseEntity<>(resultMap, status);
+            }
+            MemberDto memberDto = memberService.regist(registMemberDto);
+            resultMap.put("message", "success");
+            status = HttpStatus.ACCEPTED;
+        }catch(Exception e){
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(resultMap, status);
+    }
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody MemberDto loginMemberDto, HttpSession session)throws Exception{
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status;
+        try{
+            MemberDto memberDto = memberService.login(loginMemberDto.getId(), loginMemberDto.getPassword());
+            if(memberDto == null){
+                throw new Exception("로그인 실패");
+            }
+            session.setAttribute("id",memberDto);
+            System.out.println(session.getId());
+            resultMap.put("message", "success");
+            status = HttpStatus.OK;
+        }catch(Exception e){
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(resultMap, status);
+    }
+    @GetMapping("/info/{memberId}")
+    public ResponseEntity<?> getinfo(@PathVariable String memberId) throws Exception{
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status;
+        try{
+            MemberDto memberDto =memberService.getById(memberId);
+            resultMap.put("memberInfo", memberDto);
+            resultMap.put("message", "success");
+            status = HttpStatus.ACCEPTED;
+        }catch(Exception e){
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
 
+        return new ResponseEntity<>(resultMap, status);
+    }
 }

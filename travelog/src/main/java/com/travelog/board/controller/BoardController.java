@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping(value = "board")
 public class BoardController {
     private static final String SUCCESS = "success";
-    private BoardService boardService;
+    private final BoardService boardService;
 
     @Autowired
     public BoardController(BoardService boardService) {
@@ -37,12 +37,40 @@ public class BoardController {
             return exceptionHandling(e);
         }
     }
-
+    @GetMapping("/view/{articleno}")
+    @Transactional
+    public ResponseEntity<?> write(@PathVariable("articleno") int articleNo) {
+        try {
+            BoardDto boardDto = boardService.getArticle(articleNo);
+            if(boardDto != null) {
+                boardService.updateHit(articleNo);
+                return new ResponseEntity<>(boardDto, HttpStatus.OK);
+            }else {
+                return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+    @GetMapping("/search/{word}")
+    @Transactional
+    public ResponseEntity<?> search(@PathVariable("word") String word){
+        try{
+            List<BoardDto> list = boardService.searchArticle(word);
+            if(list != null && !list.isEmpty()){
+                return new ResponseEntity<>(list, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+        }catch(Exception e){
+            return exceptionHandling(e);
+        }
+    }
     @PostMapping("/write")
     @Transactional
     public ResponseEntity<?> write(@RequestBody BoardDto boardDto) {
         Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        HttpStatus status;
         try {
             boardService.writeArticle(boardDto);
             resultMap.put("message", SUCCESS);
@@ -51,31 +79,17 @@ public class BoardController {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+        return new ResponseEntity<>(resultMap, status);
     }
 
-    @GetMapping("/view/{articleno}")
-    @Transactional
-    public ResponseEntity<?> write(@PathVariable("articleno") int articleNo) {
-        try {
-            BoardDto boardDto = boardService.getArticle(articleNo);
-            if(boardDto != null) {
-                boardService.updateHit(articleNo);
-                return new ResponseEntity<BoardDto>(boardDto, HttpStatus.OK);
-            }else {
-                return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-            }
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
+
 
     @PutMapping("/{articleno}")
     @Transactional
     public ResponseEntity<?> modify(@PathVariable("articleno") int articleNo, @RequestBody BoardDto boardDto) {
         boardDto.setId(articleNo);
         Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        HttpStatus status;
         try {
             boardService.modifyArticle(boardDto);
             resultMap.put("message", SUCCESS);
@@ -84,14 +98,14 @@ public class BoardController {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+        return new ResponseEntity<>(resultMap, status);
     }
 
     @DeleteMapping("/{articleno}")
     @Transactional
     public ResponseEntity<?> delete(@PathVariable("articleno") int articleNo) {
         Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        HttpStatus status;
         try {
             boardService.deleteArticle(articleNo);
             resultMap.put("message", SUCCESS);
@@ -100,12 +114,12 @@ public class BoardController {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+        return new ResponseEntity<>(resultMap, status);
     }
 
 
     private ResponseEntity<String> exceptionHandling(Exception e) {
         e.printStackTrace();
-        return new ResponseEntity<String>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
