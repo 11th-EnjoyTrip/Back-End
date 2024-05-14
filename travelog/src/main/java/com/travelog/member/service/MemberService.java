@@ -10,5 +10,6 @@ public interface MemberService {
     List<MemberDto> getMembers() throws Exception;
     MemberDto getById(String memberId) throws SQLException;
     HttpStatus regist(MemberDto memberDto) throws SQLException;
-    MemberDto login(String id, String password) throws SQLException;
+    MemberDto login(MemberDto memberDto) throws SQLException;
+    void saveRefreshToken(String id, String accessToken) throws SQLException;
 }

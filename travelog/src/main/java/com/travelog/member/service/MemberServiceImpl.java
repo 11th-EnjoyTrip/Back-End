@@ -52,7 +52,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDto login(String id, String password) throws SQLException {
-        return memberDao.login(id, password);
+    public MemberDto login(MemberDto memberDto) throws SQLException {
+        return memberDao.login(memberDto);
+    }
+
+    @Override
+    public void saveRefreshToken(String id, String accessToken) throws SQLException {
+        memberDao.saveRefreshToken(id, accessToken);
     }
 }
