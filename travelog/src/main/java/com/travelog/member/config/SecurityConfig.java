@@ -29,7 +29,7 @@ public class SecurityConfig {
         http.httpBasic(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/board/**", "/", "/member/**").permitAll()
+                .requestMatchers("/board/**", "/", "/member/**", "/attraction/**").permitAll()
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated());
         http.sessionManagement((session)->session
