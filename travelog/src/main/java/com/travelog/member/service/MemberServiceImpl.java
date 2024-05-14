@@ -33,6 +33,26 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MemberDto getByUserName(String username) throws SQLException {
+        return memberDao.getByUsername(username);
+    }
+
+    @Override
+    public MemberDto getByNickName(String nickname) throws SQLException {
+        return memberDao.getByNickname(nickname);
+    }
+
+    @Override
+    public MemberDto getByEmail(String email) throws SQLException {
+        return memberDao.getByEmail(email);
+    }
+
+    @Override
+    public MemberDto getByToken(String token) throws SQLException {
+        return memberDao.getByToken(token);
+    }
+
+    @Override
     public HttpStatus regist(MemberDto memberDto) throws SQLException {
 
         if (memberDao.getById(memberDto.getId()) != null) {
@@ -57,7 +77,32 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void updateNickname(String nickname, String id) throws SQLException {
+        memberDao.updateNickname(nickname, id);
+    }
+
+    @Override
+    public void updatePassword(String password, String id) throws SQLException {
+        memberDao.updatePassword(password, id);
+    }
+
+    @Override
+    public void deleteMember(String id) throws SQLException {
+        memberDao.deleteMember(id);
+    }
+
+    @Override
     public void saveRefreshToken(String id, String accessToken) throws SQLException {
         memberDao.saveRefreshToken(id, accessToken);
+    }
+
+    @Override
+    public void deleteRefreshToken(String id) throws SQLException {
+        memberDao.deleteToken(id);
+    }
+
+    @Override
+    public String getPassword(String id, String email) throws SQLException {
+        return memberDao.getPassword(id, email);
     }
 }
