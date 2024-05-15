@@ -10,7 +10,7 @@ import java.util.List;
 public interface MemberDao {
 
 
-    @Insert(value = "INSERT INTO member (id, password, name, email, location, nickname) values (#{id},#{password},#{username},#{email},#{location}, #{nickname})")
+    @Insert(value = "INSERT INTO member (id, password, username, email, location, nickname, role, token) values (#{id},#{password},#{username},#{email},#{location}, #{nickname}, '사용자', #{token})")
     @Options(useGeneratedKeys = true, keyProperty = "no")
     void regist(MemberDto member) throws SQLException;
 
