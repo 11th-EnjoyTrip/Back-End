@@ -209,7 +209,7 @@ public class MemberController {
             String pwd = memberService.getPassword(findPwdMemberDto.getId(), findPwdMemberDto.getEmail());
             if(pwd != null){
                 resultMap.put("pwd", pwd);
-                status = HttpStatus.FOUND;
+                status = HttpStatus.OK;
             }else{
                 resultMap.put("message", "비밀번호를 찾을 수 없습니다.");
                 status = HttpStatus.NOT_FOUND;
