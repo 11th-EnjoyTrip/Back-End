@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 
 @RestController
 @RequestMapping(value = "member")
+@CrossOrigin(origins = "*", allowedHeaders = "Authorization")
 public class MemberController {
     private final MemberService memberService;
     private final JWTUtil jwtUtil;
