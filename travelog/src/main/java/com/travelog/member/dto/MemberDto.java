@@ -12,7 +12,7 @@ public class MemberDto implements Serializable {
     private int no;
     private String id;
     private String password;
-    private String name;
+    private String username;
     private String email;
     private String location;
     private String nickname;

@@ -41,6 +41,7 @@ public class MemberController {
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
             status = memberService.regist(registMemberDto);
+
             if (status == HttpStatus.CREATED) {
                 resultMap.put("message", "success");
             } else if (status == HttpStatus.CONFLICT) {

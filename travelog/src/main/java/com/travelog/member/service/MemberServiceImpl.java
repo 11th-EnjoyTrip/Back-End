@@ -14,12 +14,10 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberDao memberDao;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public MemberServiceImpl(MemberDao memberDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.memberDao = memberDao;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -65,9 +63,8 @@ public class MemberServiceImpl implements MemberService {
             return HttpStatus.CONFLICT;
         }
 
-
-        memberDto.setPassword(bCryptPasswordEncoder.encode(memberDto.getPassword()));
         memberDao.regist(memberDto);
+
         return HttpStatus.CREATED;
     }
 
