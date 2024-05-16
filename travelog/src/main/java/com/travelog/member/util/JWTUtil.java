@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 @Slf4j
 @Component
@@ -63,5 +64,9 @@ public class JWTUtil {
             return false;
         }
     }
+    public String getUserId(String token) {
+        Jws<Claims> claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(token);
 
+        return claims.getBody().get("Id").toString();
+    }
 }

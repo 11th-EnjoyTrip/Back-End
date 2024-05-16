@@ -107,9 +107,11 @@ public class MemberController {
     public ResponseEntity<?> refresh(HttpServletRequest request) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
+        // api로 받은 token
         String token = request.getHeader("Authorization");
+        // token에 담긴 id값
         String id = memberService.getByToken(token).getId();
-        if (jwtUtil.checkToken(token) && token.equals(memberService.getToken(id))) {
+        if (jwtUtil.checkToken(token) && jwtUtil.checkToken(memberService.getToken(id))) {
             String accessToken = jwtUtil.createAccessToken(id);
 
             resultMap.put("access-token", accessToken);
@@ -131,10 +133,13 @@ public class MemberController {
         // 2.
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
-                String id = memberService.getByToken(request.getHeader("Authorization")).getId();
+                // request token -> id
+                String id = jwtUtil.getUserId(request.getHeader("Authorization"));
+                System.out.println("아니암니아ㅣ;ㅁㄴ러ㅣㅏㅁㅇ노히;ㅁ : " + id);
+                //
                 MemberDto memberDto = memberService.getById(id);
-                memberDto.setPassword("");
-                memberDto.setToken("");
+//                memberDto.setPassword("");
+//                memberDto.setToken("");
                 resultMap.put("info", memberDto);
                 status = HttpStatus.OK;
             } catch (Exception e) {
