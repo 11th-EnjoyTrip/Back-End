@@ -6,7 +6,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -55,6 +54,7 @@ public class JWTUtil {
         }
         return key;
     }
+
     public boolean checkToken(String token) {
         try{
             Jws<Claims> claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(token);
@@ -63,4 +63,5 @@ public class JWTUtil {
             return false;
         }
     }
+
 }

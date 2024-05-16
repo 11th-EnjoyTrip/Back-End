@@ -47,6 +47,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDto getByToken(String token) throws SQLException {
+
         return memberDao.getByToken(token);
     }
 
@@ -54,12 +55,10 @@ public class MemberServiceImpl implements MemberService {
     public HttpStatus regist(MemberDto memberDto) throws SQLException {
 
         if (memberDao.getById(memberDto.getId()) != null) {
-            System.out.println("아이디가 겹침");
             return HttpStatus.CONFLICT;
         }
 
         if (memberDao.getByEmail(memberDto.getEmail()) != null) {
-            System.out.println("이메일이 겹침");
             return HttpStatus.CONFLICT;
         }
 
@@ -101,5 +100,10 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public String getPassword(String id, String email) throws SQLException {
         return memberDao.getPassword(id, email);
+    }
+
+    @Override
+    public String getToken(String id) throws SQLException {
+        return memberDao.getToken(id);
     }
 }

@@ -32,6 +32,9 @@ public class SecurityConfig {
                 .requestMatchers("/board/**", "/", "/member/**", "/attraction/**").permitAll()
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated());
+
+
+
         http.sessionManagement((session)->session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
