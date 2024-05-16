@@ -22,10 +22,17 @@ public interface MemberDao {
     void updatePassword(String password, String id) throws SQLException;
     @Update(value = "Update member set token = null where id = #{id} ")
     void deleteToken(String id) throws SQLException;
+
     @Delete(value = "DELETE FROM member where id = #{id}")
     void deleteMember(String id) throws SQLException;
+
     @Select(value = "SELECT * FROM member")
     List<MemberDto> getMembers() throws SQLException;
+    @Select(value = "SELECT password FROM member WHERE id = #{id} and email = #{email}")
+    String getPassword(String id, String email) throws SQLException;
+    @Select(value = "SELECT token FROM member WHERE id = #{id}")
+    String getToken(String id) throws SQLException;
+
     @Select(value = "SELECT * FROM member WHERE id = #{id}")
     MemberDto getById(String id) throws SQLException;
     @Select(value = "SELECT * FROM member WHERE username=#{username}")
@@ -39,7 +46,6 @@ public interface MemberDao {
 
     @Select(value = "SELECT * FROM member WHERE id = #{id} and password = #{password}")
     MemberDto login(MemberDto member) throws SQLException;
-    @Select(value = "SELECT password FROM member WHERE id = #{id} and email = #{email}")
-    String getPassword(String id, String email) throws SQLException;
+
 
 }
