@@ -104,12 +104,13 @@ public class MemberController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestBody MemberDto refreshMemberDto, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> refresh(HttpServletRequest request) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         String token = request.getHeader("Authorization");
-        if (jwtUtil.checkToken(token) && token.equals(memberService.getToken(refreshMemberDto.getId()))) {
-            String accessToken = jwtUtil.createAccessToken(refreshMemberDto.getId());
+        String id = memberService.getByToken(token).getId();
+        if (jwtUtil.checkToken(token) && token.equals(memberService.getToken(id))) {
+            String accessToken = jwtUtil.createAccessToken(id);
 
             resultMap.put("access-token", accessToken);
             resultMap.put("message", "success");
