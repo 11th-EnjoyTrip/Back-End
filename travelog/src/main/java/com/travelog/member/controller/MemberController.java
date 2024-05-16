@@ -4,6 +4,7 @@ import com.travelog.member.dto.MemberDto;
 import com.travelog.member.service.MemberService;
 import com.travelog.member.util.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,11 +84,12 @@ public class MemberController {
         return new ResponseEntity<>(resultMap, status);
     }
     // 로그아웃
-    @GetMapping("/logout/{id}")
-    public ResponseEntity<?> removeToken(@PathVariable("id") String id) {
+    @GetMapping("/logout")
+    public ResponseEntity<?> removeToken(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
+            String id = memberService.getByToken(request.getHeader("Authorization")).getId();
             memberService.deleteRefreshToken(id);
             resultMap.put("message", "SUCCESS");
             status = HttpStatus.ACCEPTED;
@@ -99,15 +101,18 @@ public class MemberController {
 
     }
     // 회원 정보 조회
-    @GetMapping("/info/{id}")
-    public ResponseEntity<?> getInfo(@PathVariable String id ,HttpServletRequest request) throws Exception {
+    @GetMapping("/info")
+    public ResponseEntity<?> getInfo(HttpServletRequest request) throws Exception {
 
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
 
         if(jwtUtil.checkToken(request.getHeader("Authorization"))){
             try{
+                String id = memberService.getByToken(request.getHeader("Authorization")).getId();
                 MemberDto memberDto = memberService.getById(id);
+                memberDto.setPassword("");
+                memberDto.setToken("");
                 resultMap.put("info", memberDto);
                 status = HttpStatus.OK;
             }catch(Exception e){
@@ -122,7 +127,7 @@ public class MemberController {
         return new ResponseEntity<>(resultMap, status);
     }
     // 닉네임 변경
-    @GetMapping("/updateNickname/{nickname}")
+    @PutMapping("/updateNickname/{nickname}")
     public ResponseEntity<?> updateEmail(@PathVariable("nickname") String nickname ,HttpServletRequest request) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -133,8 +138,8 @@ public class MemberController {
                     status = HttpStatus.CONFLICT;
                     return new ResponseEntity<>(resultMap, status);
                 }
-                StringTokenizer st = new StringTokenizer(request.getHeader("Authorization"));
-                String id = memberService.getByToken(st.nextToken()).getId();
+
+                String id = memberService.getByToken(request.getHeader("Authorization")).getId();
 
                 memberService.updateNickname(nickname, id);
                 resultMap.put("message", "닉네임 변경 완료");
@@ -151,7 +156,7 @@ public class MemberController {
         return new ResponseEntity<>(resultMap, status);
     }
     // 비밀번호 변경
-    @GetMapping("/updatePassword/{password}")
+    @PutMapping("/updatePassword/{password}")
     public ResponseEntity<?> updatePassword(@PathVariable("password") String password ,HttpServletRequest request) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -176,14 +181,13 @@ public class MemberController {
     }
 
     // 회원탈퇴
-    @RequestMapping("/deleteMember")
+    @DeleteMapping("/deleteMember")
     public ResponseEntity<?> deleteMember(HttpServletRequest request) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         if(jwtUtil.checkToken(request.getHeader("Authorization"))){
             try{
-                StringTokenizer st = new StringTokenizer(request.getHeader("Authorization"));
-                String id = memberService.getByToken(st.nextToken()).getId();
+                String id = memberService.getByToken(request.getHeader("Authorization")).getId();
 
                 memberService.deleteMember(id);
                 resultMap.put("message", "회원 탈퇴 완료");
