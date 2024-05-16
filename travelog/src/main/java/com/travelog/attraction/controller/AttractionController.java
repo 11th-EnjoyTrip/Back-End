@@ -18,8 +18,12 @@ public class AttractionController {
     AttractionService attractionService;
 
     @GetMapping("")
-    public ResponseEntity<?> getAttractionList(@RequestBody AttractionRequestDto attractionRequestDto, @PageableDefault(size=20) Pageable pageable) {
+    public ResponseEntity<?> getAttractionList(@ModelAttribute AttractionRequestDto attractionRequestDto, @PageableDefault(size=20) Pageable pageable) {
         try {
+            System.out.println(attractionRequestDto.getRegion());
+            System.out.println(attractionRequestDto.getCategory());
+            System.out.println(attractionRequestDto.getKeyword());
+            System.out.println(pageable);
             return ResponseEntity.ok(attractionService.getAttractionList(attractionRequestDto, pageable).getContent()) ;
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("SERVER ERROR");

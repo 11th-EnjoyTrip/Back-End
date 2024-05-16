@@ -23,7 +23,7 @@ public interface AttractionDao {
             "        WHEN content_type_id = 39 THEN '음식' " +
             "        ELSE '기타' " +
             "    END AS contentTypeName, title, first_image AS firstImage, " +
-            "    ai.sido_code AS sidoCode, s.sido_name AS sidoName " +
+            "    ai.sido_code AS sidoCode, s.sido_name AS sidoName,latitude, longitude " +
             "FROM attraction_info ai " +
             "JOIN sido s ON ai.sido_code = s.sido_code " +
             "WHERE " +
