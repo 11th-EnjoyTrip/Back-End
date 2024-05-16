@@ -91,7 +91,8 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
-            String id = memberService.getByToken(request.getHeader("Authorization")).getId();
+            String id = jwtUtil.getUserId(request.getHeader("Authorization"));
+//            String id = memberService.getByToken(request.getHeader("Authorization")).getId();
             memberService.deleteRefreshToken(id);
             resultMap.put("message", "SUCCESS");
             status = HttpStatus.ACCEPTED;
@@ -110,7 +111,7 @@ public class MemberController {
         // api로 받은 token
         String token = request.getHeader("Authorization");
         // token에 담긴 id값
-        String id = memberService.getByToken(token).getId();
+        String id = jwtUtil.getUserId(token);
         if (jwtUtil.checkToken(token) && jwtUtil.checkToken(memberService.getToken(id))) {
             String accessToken = jwtUtil.createAccessToken(id);
 
@@ -135,11 +136,7 @@ public class MemberController {
             try {
                 // request token -> id
                 String id = jwtUtil.getUserId(request.getHeader("Authorization"));
-                System.out.println("아니암니아ㅣ;ㅁㄴ러ㅣㅏㅁㅇ노히;ㅁ : " + id);
-                //
                 MemberDto memberDto = memberService.getById(id);
-//                memberDto.setPassword("");
-//                memberDto.setToken("");
                 resultMap.put("info", memberDto);
                 status = HttpStatus.OK;
             } catch (Exception e) {
@@ -147,24 +144,7 @@ public class MemberController {
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
         } else {
-////            String id = memberService.getByToken(request.getHeader("Authorization")).getId();
-////            // 1. refresh token 유효성 검증
-////            if(jwtUtil.checkToken(memberService.getById(id).getToken())){
-////                // 1-2 refresh = true
-////                // 1-2-1 token 재발급
-////                String accessToken = jwtUtil.createAccessToken(id);
-////                String refreshToken = jwtUtil.createRefreshToken(id);
-////
-////                memberService.saveRefreshToken(id, refreshToken);
-////
-////                resultMap.put("access-token", accessToken);
-//////                resultMap.put("refresh-token", refreshToken);
-////
-////                status = HttpStatus.CREATED;
-////            }
-//            else{
-//                // 1-1 refresh = false
-//                // 1-1-1 디짐
+
             resultMap.put("message", "ID or Password incorrect");
             status = HttpStatus.UNAUTHORIZED;
 //            }
@@ -187,7 +167,7 @@ public class MemberController {
                     return new ResponseEntity<>(resultMap, status);
                 }
 
-                String id = memberService.getByToken(request.getHeader("Authorization")).getId();
+                String id = jwtUtil.getUserId(request.getHeader("Authorization"));
                 System.out.println(updateNickname);
                 memberService.updateNickname(updateNickname, id);
                 resultMap.put("message", "닉네임 변경 완료");
@@ -211,7 +191,7 @@ public class MemberController {
         HttpStatus status = HttpStatus.ACCEPTED;
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
-                String id = memberService.getByToken(request.getHeader("Authorization")).getId();
+                String id = jwtUtil.getUserId(request.getHeader("Authorization"));
 
                 memberService.updatePassword(password, id);
                 resultMap.put("message", "비빌번호 변경 완료");
@@ -235,7 +215,7 @@ public class MemberController {
         HttpStatus status = HttpStatus.ACCEPTED;
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
-                String id = memberService.getByToken(request.getHeader("Authorization")).getId();
+                String id = jwtUtil.getUserId(request.getHeader("Authorization"));
 
                 memberService.deleteMember(id);
                 resultMap.put("message", "회원 탈퇴 완료");
