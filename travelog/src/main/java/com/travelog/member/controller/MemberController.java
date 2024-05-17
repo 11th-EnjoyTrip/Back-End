@@ -4,7 +4,7 @@ import com.travelog.member.dto.MemberDto;
 import com.travelog.member.service.MemberService;
 import com.travelog.member.util.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.ibatis.annotations.Delete;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
+
 
 @RestController
 @RequestMapping(value = "member")
@@ -65,10 +65,10 @@ public class MemberController {
         try {
             MemberDto loginUser = memberService.login(loginMemberDto);
             if (loginUser != null) {
-                String accessToken = jwtUtil.createAccessToken(loginUser.getId());
-                String refreshToken = jwtUtil.createRefreshToken(loginUser.getId());
+                String accessToken = jwtUtil.createAccessToken(loginUser.getUserid());
+                String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserid());
 
-                memberService.saveRefreshToken(loginUser.getId(), refreshToken);
+                memberService.saveRefreshToken(loginUser.getUserid(), refreshToken);
 
                 resultMap.put("access-token", accessToken);
                 resultMap.put("refresh-token", refreshToken);
@@ -269,7 +269,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
-            String pwd = memberService.getPassword(findPwdMemberDto.getId(), findPwdMemberDto.getEmail());
+            String pwd = memberService.getPassword(findPwdMemberDto.getUserid(), findPwdMemberDto.getEmail());
             if (pwd != null) {
                 resultMap.put("pwd", pwd);
                 status = HttpStatus.OK;
