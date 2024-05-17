@@ -144,10 +144,8 @@ public class MemberController {
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
         } else {
-
             resultMap.put("message", "ID or Password incorrect");
             status = HttpStatus.UNAUTHORIZED;
-//            }
         }
 
         return new ResponseEntity<>(resultMap, status);
