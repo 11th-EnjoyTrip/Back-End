@@ -3,7 +3,9 @@ package com.travelog.review.controller;
 import com.travelog.member.util.JWTUtil;
 import com.travelog.review.dto.ReviewDto;
 import com.travelog.review.service.ReviewService;
+import com.travelog.review.service.ReviewServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,6 +61,10 @@ public class ReviewController {
         Map<String, Object> result = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
+            List<ReviewDto> list = reviewService.getReviewsByContentId(content_id);
+            result.put("message", "SUCCESS");
+            result.put("reviews", list);
+            status = HttpStatus.OK;
 
         } catch (Exception e) {
             result.put("message", e.getMessage());
@@ -77,7 +83,7 @@ public class ReviewController {
             try {
 
                 String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
-                List<ReviewDto> list = reviewService.written(userid);
+                List<ReviewDto> list = reviewService.getReviewsByUserid(userid);
                 result.put("message", "SUCCESS");
                 result.put("data", list);
                 status = HttpStatus.OK;
@@ -124,4 +130,31 @@ public class ReviewController {
         return new ResponseEntity<>(result, status);
     }
     // Delete
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(@RequestBody Map<String, Integer> review_id, HttpServletRequest request) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        // 토큰 검증
+        if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
+            try{
+                String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
+                String writerId = reviewService.getIdByReview_id(review_id.get("review_id"));
+                if(userid.equals(writerId)){
+                    reviewService.delete(review_id.get("review_id"));
+                    result.put("message", "SUCCESS");
+                    status = HttpStatus.OK;
+                }else{
+                    result.put("message", "작성자가 아닙니다.");
+                    status = HttpStatus.BAD_REQUEST;
+                }
+            }catch(Exception e){
+                result.put("message", e.getMessage());
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }else{
+            result.put("message", "Token Error");
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        return new ResponseEntity<>(result, status);
+    }
 }

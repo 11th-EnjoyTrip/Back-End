@@ -21,8 +21,8 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public List<ReviewDto> written(String user_id) throws Exception {
-        return reviewDao.written(user_id);
+    public List<ReviewDto> getReviewsByUserid(String user_id) throws Exception {
+        return reviewDao.getReviewsByUserid(user_id);
     }
 
     @Override
@@ -33,5 +33,20 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public String getIdByContent_id(String content_id) {
         return reviewDao.getIdByContent_id(content_id);
+    }
+
+    @Override
+    public List<ReviewDto> getReviewsByContentId(String content_id) throws Exception {
+        return reviewDao.getReviewsByContentId(content_id);
+    }
+
+    @Override
+    public String getIdByReview_id(int review_id) {
+        return reviewDao.getIdByReview_id(review_id);
+    }
+
+    @Override
+    public void delete(int review_id) {
+        reviewDao.delete(review_id);
     }
 }
