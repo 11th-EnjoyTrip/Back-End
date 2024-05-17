@@ -54,7 +54,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public HttpStatus regist(MemberDto memberDto) throws SQLException {
 
-        if (memberDao.getById(memberDto.getId()) != null) {
+        if (memberDao.getById(memberDto.getUserid()) != null) {
             return HttpStatus.CONFLICT;
         }
 
