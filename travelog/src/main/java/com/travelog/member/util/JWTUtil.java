@@ -65,8 +65,11 @@ public class JWTUtil {
         }
     }
     public String getUserId(String token) {
-        Jws<Claims> claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(token);
-
-        return claims.getBody().get("Id").toString();
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(token);
+            return claims.getBody().get("Id").toString();
+        } catch (Exception e) {
+            return "fail";
+        }
     }
 }

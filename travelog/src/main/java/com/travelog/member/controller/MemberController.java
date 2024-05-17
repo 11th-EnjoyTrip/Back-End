@@ -19,7 +19,7 @@ import java.util.StringTokenizer;
 
 @RestController
 @RequestMapping(value = "member")
-@CrossOrigin(origins = "*", allowedHeaders = "Authorization")
+@CrossOrigin(origins = "*", allowedHeaders = {"Authorization", "refreshToken", "Content-Type"})
 public class MemberController {
     private final MemberService memberService;
     private final JWTUtil jwtUtil;
@@ -76,7 +76,7 @@ public class MemberController {
                 status = HttpStatus.CREATED;
             } else {
                 resultMap.put("message", "ID or Password incorrect");
-                status = HttpStatus.UNAUTHORIZED;
+                status = HttpStatus.NOT_FOUND;
             }
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
@@ -109,10 +109,10 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         // api로 받은 token
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader("refreshToken");
         // token에 담긴 id값
         String id = jwtUtil.getUserId(token);
-        if (jwtUtil.checkToken(token) && jwtUtil.checkToken(memberService.getToken(id))) {
+        if (!id.equals("fail") && jwtUtil.checkToken(token) && jwtUtil.checkToken(memberService.getToken(id))) {
             String accessToken = jwtUtil.createAccessToken(id);
 
             resultMap.put("access-token", accessToken);
@@ -172,6 +172,37 @@ public class MemberController {
                 memberService.updateNickname(updateNickname, id);
                 resultMap.put("message", "닉네임 변경 완료");
                 status = HttpStatus.OK;
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        } else {
+            resultMap.put("message", "Token 인증 실패");
+            status = HttpStatus.UNAUTHORIZED;
+        }
+
+        return new ResponseEntity<>(resultMap, status);
+    }
+
+    // 비밀번호 일치 확인
+    @PostMapping("/checkpassword")
+    public ResponseEntity<?> checkPassword(@RequestBody Map<String, String> password, HttpServletRequest request) throws Exception {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        String updatePassword = password.get("password");
+
+        if(jwtUtil.checkToken(request.getHeader("Authorization"))) {
+            try {
+                String id = jwtUtil.getUserId(request.getHeader("Authorization"));
+                String originalPassword = memberService.getById(id).getPassword();
+
+                if(originalPassword.equals(updatePassword)) {
+                    resultMap.put("message", "비밀번호 일치");
+                    status = HttpStatus.OK;
+                } else {
+                    resultMap.put("message", "비밀번호 불일치");
+                    status = HttpStatus.NOT_FOUND;
+                }
             } catch (Exception e) {
                 resultMap.put("message", e.getMessage());
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
