@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/attraction")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AttractionController {
-    @Autowired
-    AttractionService attractionService;
+
+    private final AttractionService attractionService;
+
+    public AttractionController(AttractionService attractionService) {
+        this.attractionService = attractionService;
+    }
 
     @GetMapping("")
     public ResponseEntity<?> getAttractionList(@ModelAttribute AttractionRequestDto attractionRequestDto, @PageableDefault(size=20) Pageable pageable) {

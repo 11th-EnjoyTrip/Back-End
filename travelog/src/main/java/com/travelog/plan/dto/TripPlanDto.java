@@ -17,6 +17,6 @@ public class TripPlanDto {
     private String intro;
     private boolean isShared;
     private int likes;
-    private int memberId;
+    private String userid;
 
 }

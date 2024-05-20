@@ -2,9 +2,6 @@ package com.travelog.plan.service;
 
 import com.travelog.attraction.dto.AttractionInfoDto;
 import com.travelog.attraction.service.AttractionService;
-import com.travelog.likes.dto.LikeType;
-import com.travelog.likes.dto.LikesRequestDto;
-import com.travelog.likes.service.LikesService;
 import com.travelog.plan.dao.PlanDao;
 import com.travelog.plan.dto.*;
 import com.travelog.plan.exception.InvalidException;
@@ -14,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,19 +24,17 @@ public class PlanServiceImpl implements PlanService {
 
     private final PlanDao planDao;
     private final AttractionService attractionService;
-    private final LikesService likesService;
 
     @Autowired
-    public PlanServiceImpl(PlanDao planDao, AttractionService attractionService, LikesService likesService) {
+    public PlanServiceImpl(PlanDao planDao, AttractionService attractionService) {
         this.planDao = planDao;
         this.attractionService = attractionService;
-        this.likesService = likesService;
     }
 
-    // 여행 계획 DB 저장
+    // #1 여행 계획 저장
     @Override
     @Transactional
-    public void insertPlan(PlanRequestDto planRequestDto, int userId) throws SQLException {
+    public void insertPlan(PlanRequestDto planRequestDto, String userId) throws SQLException {
 
         // TODO#1 : TripPlan 저장, TripPlan 저장한 tripPlanId 가져오기
         long tripPlanId = insertTripPlan(planRequestDto, userId);
@@ -50,14 +43,14 @@ public class PlanServiceImpl implements PlanService {
         insertDetailPlan(planRequestDto.getDayPlanList(),tripPlanId);
     }
 
-
-    // 공유된 여행 계획 리스트만 조회
+    // #2 공유된 여행 계획 리스트만 조회
     @Override
     @Transactional
-    public Page<Map<String, Object>> getSharedPlanList(Pageable pageable) throws SQLException {
+    public Page<Map<String, Object>> getSharedPlanList(Pageable pageable,String userid) throws SQLException {
 
         //빌더 패턴으로 data,pageable 파라미터에 데이터 주입
         RequestList<?> requestList = RequestList.builder()
+                .data(userid)
                 .pageable(pageable)
                 .build();
 
@@ -66,49 +59,51 @@ public class PlanServiceImpl implements PlanService {
         return new PageImpl<>(content);
     }
 
+
+    // #3 여행 계획 상세 조회
+    @Override
+    public PlanResponseDto getDetailPlan(Long tripPlanId,String userId) throws SQLException {
+        return planDao.getDetailPlan(tripPlanId,userId);
+    }
+
+
     @Override
     @Transactional
-    public Page<Map<String, Object>> getLikeTripPlans(int memberId,Pageable pageable) throws SQLException {
+    public Page<Map<String, Object>> getLikeTripPlans(String userId,Pageable pageable) throws SQLException {
 
         RequestList<?> requestList = RequestList.builder()
+                .data(userId)
                 .pageable(pageable)
                 .build();
 
-        List<Map<String,Object>> content = planDao.getLikePlanList(memberId,requestList);
+        List<Map<String,Object>> content = planDao.getLikePlanList(requestList);
 
         return new PageImpl<>(content);
     }
 
     @Override
     @Transactional
-    public Page<Map<String, Object>> getMyTripPlans(int memberId, Pageable pageable) throws SQLException {
+    public Page<Map<String, Object>> getMyTripPlans(String userId, Pageable pageable) throws SQLException {
         RequestList<?> requestList = RequestList.builder()
+                .data(userId)
                 .pageable(pageable)
                 .build();
 
-        List<Map<String,Object>> content = planDao.getMyPlanList(memberId,requestList);
+        List<Map<String,Object>> content = planDao.getMyPlanList(requestList);
 
         return new PageImpl<>(content);
     }
 
-    @Override
-    public PlanResponseDto getDetailPlan(Long tripPlanId) throws SQLException {
-        return planDao.getDetailPlan(tripPlanId);
-    }
 
     @Override
     @Transactional
-    public void deleteTripPlan(int tripPlanId,int memberId) throws SQLException {
+    public void deleteTripPlan(int tripPlanId,String userId) throws SQLException {
 
-        // TODO : 해당 계획 좋아요 누른 것들 모두 삭제
-        LikesRequestDto likesRequestDto = LikesRequestDto.builder()
-                .likeType(LikeType.PLAN)
-                .likeTypeId(tripPlanId)
-                .build();
-        likesService.deleteLikes(likesRequestDto);
+        // TODO : 해당 tripPlan이 userId가 작성한 것이 맞는지 확인
+        verifyUserTripPlan(tripPlanId,userId);
 
         // TODO : 여행 계획 삭제
-        planDao.deleteTripPlan(tripPlanId,memberId);
+        planDao.deleteTripPlan(tripPlanId,userId);
 
     }
 
@@ -118,10 +113,30 @@ public class PlanServiceImpl implements PlanService {
         //TODO#1 : planRequestDto의 TripPlan 부분 수정
         updateTripPlan(tripPlanId,planRequestDto);
 
-        //TODO#2 : dayPlanList 반복문으로 돌면서 동일한 day 가 있는 경우
-        // ->  detailPlanList 업데이트
-        // - 동일한 day 가 없는 경우 -> 해당 day detailPlan 전체 삭제
-        updateDetailPlan(tripPlanId,planRequestDto.getDayPlanList());
+        //TODO#2 : 해당 day detailPlan 전체 삭제
+        deleteDetailPlan(tripPlanId);
+
+        //TODO#3 : 해당 day들 detailPlan에 삽입
+        insertDetailPlan(planRequestDto.getDayPlanList(),tripPlanId);
+    }
+
+    @Override
+    @Transactional
+    public void insertPlanLike(Long tripPlanId,String userId) throws SQLException {
+        // TODO#1 : 여행 계획 좋아요 삽입
+        planDao.insertPlanLike(tripPlanId,userId);
+
+        // TODO#2 : 해당 여행 계획에 likes+1
+        planDao.incrementLikes(tripPlanId);
+    }
+
+    @Override
+    public void deletePlanLike(Long tripPlanId, String userId) throws SQLException {
+        // TODO#1 : 여행 계획 좋아요 삭제
+        planDao.deletePlanLike(tripPlanId,userId);
+
+        // TODO#2 : 해당 여행 계획에 likes-1
+        planDao.decrementLikes(tripPlanId);
     }
 
     // 여행 계획 수정
@@ -139,30 +154,15 @@ public class PlanServiceImpl implements PlanService {
         planDao.updateTripPlan(tripPlanId,tripPlanDto);
     }
 
-    // 상세 계획 수정
-    public void updateDetailPlan(Long tripPlanId,List<DayPlanDto> dayPlanDtoList) throws SQLException{
-        //TODO#2 : dayPlanList 반복문으로 돌면서 동일한 day 가 있는 경우
-        // ->  detailPlanList 업데이트
-        // - 동일한 day 가 없는 경우 -> 해당 day detailPlan 전체 삭제
-
-        for (DayPlanDto dayPlanDto : dayPlanDtoList) {
-            int day = dayPlanDto.getDay();
-            List<DetailPlanRequestDto> detailPlanDtoList = dayPlanDto.getDetailPlanList();
-
-            // 동일한 day가 있는지 확인합니다.
-//            if (isDayExists(tripPlanId, day)) {
-//                // 동일한 day가 있으면 해당 세부 계획들을 업데이트합니다.
-//                updateDetailPlans(tripPlanId, day, detailPlanDtoList);
-//            } else {
-//                // 동일한 day가 없으면 해당 날짜의 세부 계획들을 전체 삭제합니다.
-//                deleteDetailPlans(tripPlanId, day);
-//            }
-        }
+    // 상세 계획 전체 삭제
+    @Transactional
+    public void deleteDetailPlan(Long tripPlanId) throws SQLException{
+        planDao.deleteDetailPlan(tripPlanId);
     }
 
     // TripPlan 저장
     @Transactional
-    public Long insertTripPlan(PlanRequestDto planRequestDto, int userId) throws SQLException {
+    public Long insertTripPlan(PlanRequestDto planRequestDto, String userId) throws SQLException {
 
         TripPlanDto tripPlanDto = TripPlanDto.builder()
                 .title(planRequestDto.getTitle())
@@ -170,7 +170,7 @@ public class PlanServiceImpl implements PlanService {
                 .isShared(planRequestDto.isShared())
                 .startDate(planRequestDto.getStartDate())
                 .endDate(planRequestDto.getEndDate())
-                .memberId(userId)
+                .userid(userId)
                 .build();
 
         planDao.insertTripPlan(tripPlanDto);
@@ -184,7 +184,6 @@ public class PlanServiceImpl implements PlanService {
     public void insertDetailPlan(List<DayPlanDto> dayPlanDtoList, Long tripPlanId) {
 
         dayPlanDtoList.forEach(dayPlan -> {
-            System.out.println(dayPlan);
             dayPlan.getDetailPlanList().forEach(detailPlan -> {
 
                 // contentId가 유효한지 확인
@@ -205,7 +204,7 @@ public class PlanServiceImpl implements PlanService {
                         .transportation(detailPlan.getTransportation())
                         .contentId(detailPlan.getContentId())
                         .build();
-                System.out.println(detailPlanDto);
+
                 try {
                     planDao.insertDetailPlan(detailPlanDto);
                 } catch (SQLException e) {
@@ -231,5 +230,12 @@ public class PlanServiceImpl implements PlanService {
         } catch (IllegalArgumentException e) {
             throw new WrongTransportationException("유효하지 않은 이동수단 : " + transportValue);
         }
+    }
+
+    // 해당 tripPlan이 userId가 작성한 것이 맞는지 확인
+    @Transactional
+    public void verifyUserTripPlan(int tripPlanId,String userId) throws InvalidException {
+        Boolean isUserTripPlan = planDao.isUserTripPlan(tripPlanId,userId);
+        if(!isUserTripPlan) throw new InvalidException("해당 유저가 작성한 것이 아닙니다. : "+tripPlanId);
     }
 }
