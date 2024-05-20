@@ -3,6 +3,7 @@ package com.travelog.plan.dto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 
 @Getter
@@ -10,14 +11,29 @@ import java.sql.Timestamp;
 public class DetailPlanDto {
     private int detailPlanId;
     private int day;
-    private int seqence;
+    private int sequence;
     private String memo;
-    private Timestamp departureTime;
-    private Timestamp arrivalTime;
+    private Time departureTime;
+    private Time arrivalTime;
     private float distance;
-    // enum 변경 고민중
-    private String transportation;
-
+    // enum
+    private Transportation transportation;
     private int contentId;
-    private int tripPlanId;
+    private Long tripPlanId;
+
+    @Override
+    public String toString() {
+        return "DetailPlanDto{" +
+                "detailPlanId=" + detailPlanId +
+                ", day=" + day +
+                ", sequence=" + sequence +
+                ", memo='" + memo + '\'' +
+                ", departureTime=" + departureTime +
+                ", arrivalTime=" + arrivalTime +
+                ", distance=" + distance +
+                ", transportation=" + transportation +
+                ", contentId=" + contentId +
+                ", tripPlanId=" + tripPlanId +
+                '}';
+    }
 }

@@ -1,6 +1,7 @@
 package com.travelog.attraction.dao;
 
 import com.travelog.attraction.dto.AttractionDetailDto;
+import com.travelog.attraction.dto.AttractionInfoDto;
 import com.travelog.util.RequestList;
 import org.apache.ibatis.annotations.*;
 
@@ -58,5 +59,9 @@ public interface AttractionDao {
     @Result(property = "sidoName",column = "sido_name")
     AttractionDetailDto getAttractionDetail(int id) throws SQLException;
 
+    @Select("select content_id as contentId, content_type_id as contentTypeId, title, addr1, addr2, zipcode," +
+            "tel, first_image as firstImage, readcount, sido_code as sidoCode, gugun_code as gugunCode, latitude, longitude" +
+            " from attraction_info where content_id = #{contentId};")
+    AttractionInfoDto findAttractionById(int contentId);
 
 }
