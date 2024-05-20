@@ -2,6 +2,7 @@ package com.travelog.member.service;
 
 import com.travelog.member.dao.MemberDao;
 import com.travelog.member.dto.MemberDto;
+import com.travelog.member.dto.ResponseMemberDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,32 +22,37 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberDto> getMembers() throws Exception {
+    public List<ResponseMemberDto> getMembers() throws Exception {
         return memberDao.getMembers();
     }
 
     @Override
-    public MemberDto getById(String memberId) throws SQLException {
-        return memberDao.getById(memberId);
+    public MemberDto getMemberDtoById(String userid) throws SQLException {
+        return memberDao.getMemberDtoById(userid);
     }
 
     @Override
-    public MemberDto getByUserName(String username) throws SQLException {
+    public ResponseMemberDto getResponseMemberDtoById(String userid) throws SQLException {
+        return memberDao.getResponseMemberDtoById(userid);
+    }
+
+    @Override
+    public ResponseMemberDto getByUserName(String username) throws SQLException {
         return memberDao.getByUsername(username);
     }
 
     @Override
-    public MemberDto getByNickName(String nickname) throws SQLException {
+    public ResponseMemberDto getByNickName(String nickname) throws SQLException {
         return memberDao.getByNickname(nickname);
     }
 
     @Override
-    public MemberDto getByEmail(String email) throws SQLException {
+    public ResponseMemberDto getByEmail(String email) throws SQLException {
         return memberDao.getByEmail(email);
     }
 
     @Override
-    public MemberDto getByToken(String token) throws SQLException {
+    public ResponseMemberDto getByToken(String token) throws SQLException {
 
         return memberDao.getByToken(token);
     }
@@ -54,7 +60,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public HttpStatus regist(MemberDto memberDto) throws SQLException {
 
-        if (memberDao.getById(memberDto.getUserid()) != null) {
+        if (memberDao.getMemberDtoById(memberDto.getUserid()) != null) {
             return HttpStatus.CONFLICT;
         }
 
@@ -68,7 +74,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDto login(MemberDto memberDto) throws SQLException {
+    public ResponseMemberDto login(MemberDto memberDto) throws SQLException {
         return memberDao.login(memberDto);
     }
 

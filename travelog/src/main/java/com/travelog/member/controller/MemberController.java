@@ -1,10 +1,12 @@
 package com.travelog.member.controller;
 
 import com.travelog.member.dto.MemberDto;
+import com.travelog.member.dto.ResponseMemberDto;
 import com.travelog.member.service.MemberService;
 import com.travelog.member.util.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "member")
 @CrossOrigin(origins = "*", allowedHeaders = {"Authorization", "refreshToken", "Content-Type"})
+@Slf4j
 public class MemberController {
     private final MemberService memberService;
     private final JWTUtil jwtUtil;
@@ -32,7 +35,7 @@ public class MemberController {
 
     // 회원 목록 조회
     @GetMapping("/all")
-    public List<MemberDto> all() throws Exception {
+    public List<ResponseMemberDto> all() throws Exception {
         return memberService.getMembers();
     }
 
@@ -63,7 +66,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
-            MemberDto loginUser = memberService.login(loginMemberDto);
+            ResponseMemberDto loginUser = memberService.login(loginMemberDto);
             if (loginUser != null) {
                 String accessToken = jwtUtil.createAccessToken(loginUser.getUserid());
                 String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserid());
@@ -136,10 +139,11 @@ public class MemberController {
             try {
                 // request token -> id
                 String id = jwtUtil.getUserId(request.getHeader("Authorization"));
-                MemberDto memberDto = memberService.getById(id);
+                ResponseMemberDto memberDto = memberService.getResponseMemberDtoById(id);
                 resultMap.put("info", memberDto);
                 status = HttpStatus.OK;
             } catch (Exception e) {
+                log.info(e.getMessage());
                 resultMap.put("message", e.getMessage());
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
@@ -192,7 +196,7 @@ public class MemberController {
         if(jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
                 String id = jwtUtil.getUserId(request.getHeader("Authorization"));
-                String originalPassword = memberService.getById(id).getPassword();
+                String originalPassword = memberService.getMemberDtoById(id).getPassword();
 
                 if(originalPassword.equals(updatePassword)) {
                     resultMap.put("message", "비밀번호 일치");
@@ -289,7 +293,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
-            if (memberService.getById(id) == null) {
+            if (memberService.getResponseMemberDtoById(id) == null) {
                 resultMap.put("message", "사용 가능한 아이디");
                 status = HttpStatus.OK;
             } else {
