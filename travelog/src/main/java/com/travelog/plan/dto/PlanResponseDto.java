@@ -16,12 +16,12 @@ import java.util.Map;
 @Data
 public class PlanResponseDto {
     private Long tripPlanId;
-    private Date startDate;
-    private Date endDate;
+    private String startDate;
+    private String endDate;
     private String title;
     private String intro;
     private int likes;
-    private Timestamp updatedAt;
+    private String updatedAt;
     private String userid;
     private String nickname;
     private String username;
@@ -29,21 +29,4 @@ public class PlanResponseDto {
     private String dayPlanList;
     // private List<DayPlanResponseDto> dayPlanList;
 
-    @Override
-    public String toString() {
-        return "PlanResponseDto{" +
-                "tripPlanId=" + tripPlanId +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", title='" + title + '\'' +
-                ", intro='" + intro + '\'' +
-                ", likes=" + likes +
-                ", updatedAt=" + updatedAt +
-                ", userid='" + userid + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", username='" + username + '\'' +
-                ", isLikedPlan=" + isLikedPlan +
-                ", dayPlanList=" + dayPlanList +
-                '}';
-    }
 }

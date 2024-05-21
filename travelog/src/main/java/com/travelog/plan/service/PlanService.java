@@ -3,6 +3,7 @@ package com.travelog.plan.service;
 import com.travelog.plan.dto.PlanLikeRequest;
 import com.travelog.plan.dto.PlanRequestDto;
 import com.travelog.plan.dto.PlanResponseDto;
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,4 +22,6 @@ public interface PlanService {
     void updatePlan(Long tripPlanId,PlanRequestDto planRequestDto) throws SQLException;
     void insertPlanLike(Long tripPlanId,String userId) throws SQLException;
     void deletePlanLike(Long tripPlanId,String userId) throws SQLException;
+
+    void updateIsSharedPlan(Long tripPlanId) throws SQLException;
 }
