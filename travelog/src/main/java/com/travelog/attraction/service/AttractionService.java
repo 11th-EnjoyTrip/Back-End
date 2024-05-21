@@ -11,8 +11,11 @@ import java.util.Map;
 
 @Service
 public interface AttractionService {
-    Page<Map<String, Object>> getAttractionList(AttractionRequestDto attractionRequestDto, Pageable pageable) throws Exception;
-    AttractionDetailDto getAttractionDetail(int id) throws Exception;
+    Page<Map<String, Object>> getAttractionList(AttractionRequestDto attractionRequestDto, Pageable pageable,String userId) throws Exception;
+    AttractionDetailDto getAttractionDetail(int contentId,String userId) throws Exception;
 
     AttractionInfoDto findAttractionById(int contentId) throws InvalidException;
+
+    void insertAttractionLike(Long contentId,String userId) throws Exception;
+    void deleteAttractionLike(Long contentId,String userId) throws Exception;
 }
