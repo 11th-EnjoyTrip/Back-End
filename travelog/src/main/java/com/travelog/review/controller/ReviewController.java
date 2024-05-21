@@ -238,4 +238,23 @@ public class ReviewController {
         }
         return new ResponseEntity<>(result, status);
     }
+
+    // Top 5 review
+    @GetMapping("/best")
+    public ResponseEntity<?> best() throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try{
+            List<ReviewDto> list = reviewServiceImpl.getTopReview();
+            result.put("message", "SUCCESS");
+            result.put("best reviews", list);
+            status = HttpStatus.OK;
+        }catch(Exception e){
+            result.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(result, status);
+    }
 }

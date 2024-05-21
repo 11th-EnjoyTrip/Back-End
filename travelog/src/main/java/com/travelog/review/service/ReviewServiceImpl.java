@@ -50,6 +50,12 @@ public class ReviewServiceImpl implements ReviewService{
     public List<ResponseReviewDto> getResponseReviewsByUserid(String user_id) throws Exception {
         return reviewDao.getResponseReviewsByUserid(user_id);
     }
+
+    @Override
+    public List<ReviewDto> getTopReview() throws SQLException {
+        return reviewDao.getTopReview();
+    }
+
     @Override
     public List<ResponseReviewDto[]> getReviewLikeByUserid(String userid) throws Exception {
         List<ResponseReviewDto[]> result = new ArrayList<>();
@@ -88,8 +94,11 @@ public class ReviewServiceImpl implements ReviewService{
         reviewLikeDto.setReview_id(review_id);
         reviewLikeDto.setUserid(userid);
         reviewDao.addLike(reviewLikeDto);
+        reviewDao.updateLike(review_id);
     }
-
+    public void updateLike(int review_id) {
+        reviewDao.updateLike(review_id);
+    }
     @Override
     public void deleteLike(int review_id, String userid) {
         ReviewLikeDto reviewLikeDto = new ReviewLikeDto();

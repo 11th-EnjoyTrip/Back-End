@@ -39,6 +39,13 @@ public interface ReviewDao {
             "FROM review as a join review_like as b ON a.review_id = b.review_id " +
             "WHERE a.userid = #{userid};")
     List<ResponseReviewDto> getReviewLikeByUserid(String userid) throws SQLException;
+
+    @Select(value = "SELECT * FROM review ORDER BY likes DESC LIMIT 5")
+    List<ReviewDto> getTopReview() throws SQLException;
+
+    @Update(value = "UPDATE review set likes = likes + 1 WHERE review_id = #{review_id}")
+    void updateLike(int review_id);
+
     @Delete(value = "DELETE FROM review WHERE review_id = #{review_id}")
     void delete(int review_id);
 
