@@ -2,6 +2,7 @@ package com.travelog.review.service;
 
 import com.travelog.review.dao.ReviewDao;
 import com.travelog.review.dto.ReviewDto;
+import com.travelog.review.dto.ReviewLikeDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,4 +50,18 @@ public class ReviewServiceImpl implements ReviewService{
     public void delete(int review_id) {
         reviewDao.delete(review_id);
     }
+
+    @Override
+    public void reviewLike(int review_id, String userid) {
+        ReviewLikeDto reviewLikeDto = new ReviewLikeDto();
+        reviewLikeDto.setReview_id(review_id);
+        reviewLikeDto.setUserid(userid);
+
+        System.out.println(reviewLikeDto.toString());
+//        reviewDao.reviewLike(reviewLikeDto);
+
+        reviewDao.reviewLike(reviewLikeDto);
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package com.travelog.review.dao;
 
 import com.travelog.review.dto.ReviewDto;
+import com.travelog.review.dto.ReviewLikeDto;
 import org.apache.ibatis.annotations.*;
 
 import javax.annotation.processing.SupportedSourceVersion;
@@ -27,4 +28,7 @@ public interface ReviewDao {
 
     @Delete(value = "DELETE FROM review WHERE review_id = #{review_id}")
     void delete(int review_id);
+
+    @Insert(value = "INSERT INTO review_like(review_id, userid) values (#{review_id}, #{userid})")
+    void reviewLike(ReviewLikeDto reviewLikeDto);
 }

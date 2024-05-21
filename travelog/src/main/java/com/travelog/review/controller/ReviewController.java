@@ -1,5 +1,6 @@
 package com.travelog.review.controller;
 
+import com.travelog.member.service.MemberServiceImpl;
 import com.travelog.member.util.JWTUtil;
 import com.travelog.review.dto.ReviewDto;
 import com.travelog.review.dto.UpdateReviewDto;
@@ -23,11 +24,13 @@ import java.util.Map;
 public class ReviewController {
     private final ReviewService reviewService;
     private final JWTUtil jwtUtil;
+    private final ReviewServiceImpl reviewServiceImpl;
 
     @Autowired
-    public ReviewController(ReviewService reviewService, JWTUtil jwtUtil) {
+    public ReviewController(ReviewService reviewService, JWTUtil jwtUtil, MemberServiceImpl memberServiceImpl, ReviewServiceImpl reviewServiceImpl) {
         this.reviewService = reviewService;
         this.jwtUtil = jwtUtil;
+        this.reviewServiceImpl = reviewServiceImpl;
     }
 
     // 리뷰 작성
@@ -114,11 +117,11 @@ public class ReviewController {
                 System.out.println("TEXT : " + updateReviewDto.getText());
                 System.out.println("content_id : " + updateReviewDto.getReview_id());
                 String writer = reviewService.getIdByReview_id(updateReviewDto.getReview_id());
-                if(userid.equals(writer)){
+                if (userid.equals(writer)) {
                     reviewService.update(updateReviewDto.getText(), updateReviewDto.getReview_id());
                     result.put("message", "SUCCESS");
                     status = HttpStatus.OK;
-                }else{
+                } else {
                     result.put("message", "본인이 작성한 리뷰가 아닙니다.");
                     status = HttpStatus.BAD_REQUEST;
                 }
@@ -126,13 +129,14 @@ public class ReviewController {
                 result.put("message", e.getMessage());
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
-        }else{
+        } else {
             result.put("message", "Token Error");
             status = HttpStatus.UNAUTHORIZED;
         }
 
         return new ResponseEntity<>(result, status);
     }
+
     // Delete
     @DeleteMapping("/delete")
     public ResponseEntity<?> delete(@RequestBody Map<String, Integer> review_id, HttpServletRequest request) throws Exception {
@@ -140,25 +144,51 @@ public class ReviewController {
         HttpStatus status = HttpStatus.ACCEPTED;
         // 토큰 검증
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
-            try{
+            try {
                 String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
                 String writerId = reviewService.getIdByReview_id(review_id.get("review_id"));
-                if(userid.equals(writerId)){
+                if (userid.equals(writerId)) {
                     reviewService.delete(review_id.get("review_id"));
                     result.put("message", "SUCCESS");
                     status = HttpStatus.OK;
-                }else{
+                } else {
                     result.put("message", "작성자가 아닙니다.");
                     status = HttpStatus.BAD_REQUEST;
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 result.put("message", e.getMessage());
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
-        }else{
+        } else {
             result.put("message", "Token Error");
             status = HttpStatus.UNAUTHORIZED;
         }
+        return new ResponseEntity<>(result, status);
+    }
+
+    @PostMapping("/like")
+    public ResponseEntity<?> like(@RequestBody ReviewDto reviewDto, HttpServletRequest request) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
+            try {
+                String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
+                System.out.println(userid);
+                System.out.println(reviewDto.getReview_id());
+                reviewServiceImpl.reviewLike(reviewDto.getReview_id(), userid);
+
+                result.put("message", "SUCCESS");
+                status = HttpStatus.OK;
+            } catch (Exception e) {
+                result.put("message", e.getMessage());
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        } else {
+            result.put("message", "Token Error");
+            status = HttpStatus.UNAUTHORIZED;
+        }
+
         return new ResponseEntity<>(result, status);
     }
 }
