@@ -2,6 +2,7 @@ package com.travelog.review.controller;
 
 import com.travelog.member.util.JWTUtil;
 import com.travelog.review.dto.ReviewDto;
+import com.travelog.review.dto.UpdateReviewDto;
 import com.travelog.review.service.ReviewService;
 import com.travelog.review.service.ReviewServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -102,16 +103,19 @@ public class ReviewController {
 
     // Update
     @PatchMapping("/update")
-    public ResponseEntity<?> update(@RequestBody String text, String content_id, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> update(@RequestBody UpdateReviewDto updateReviewDto, HttpServletRequest request) throws Exception {
         Map<String, Object> result = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
 
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
                 String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
-                String writer = reviewService.getIdByContent_id(content_id);
+                System.out.println("UserId : " + userid);
+                System.out.println("TEXT : " + updateReviewDto.getText());
+                System.out.println("content_id : " + updateReviewDto.getReview_id());
+                String writer = reviewService.getIdByReview_id(updateReviewDto.getReview_id());
                 if(userid.equals(writer)){
-                    reviewService.update(text, content_id);
+                    reviewService.update(updateReviewDto.getText(), updateReviewDto.getReview_id());
                     result.put("message", "SUCCESS");
                     status = HttpStatus.OK;
                 }else{
