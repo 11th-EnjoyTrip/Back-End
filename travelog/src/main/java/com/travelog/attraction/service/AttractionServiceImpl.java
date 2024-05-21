@@ -51,7 +51,6 @@ public class AttractionServiceImpl implements  AttractionService{
     public AttractionInfoDto findAttractionById(int contentId) throws InvalidException {
 
         AttractionInfoDto attraction = attractionDao.findAttractionById(contentId);
-        System.out.println(111);
         return attraction;
     }
 }
