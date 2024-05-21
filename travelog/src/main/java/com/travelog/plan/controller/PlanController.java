@@ -74,11 +74,22 @@ public class PlanController {
         }
     }
 
-//    //TODO : 여행 계획 공유 여부 변경 (PATCH)
-//    @PatchMapping("/shared/{tripPlanId}")
-//    public ResponseEntity<?> updateIsSharedPlan(@PathVariable("tripPlanId") Long tripPlanId, HttpServletRequest request){
-//
-//    }
+    // 여행 계획 공유 여부 변경 (PATCH)
+    @PatchMapping("/shared/{tripPlanId}")
+    public ResponseEntity<?> updateIsSharedPlan(@PathVariable("tripPlanId") Long tripPlanId, HttpServletRequest request){
+        if(jwtUtil.checkToken(request.getHeader("Authorization"))) {
+            try{
+                String id = jwtUtil.getUserId(request.getHeader("Authorization"));
+                // 여행 계획 공유 칼럼 변경
+                planService.updateIsSharedPlan(tripPlanId);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }catch(Exception e){
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }else{
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
 
     //여행 계획 상세 조회(개별) (GET)
     @GetMapping("/{tripPlanId}")

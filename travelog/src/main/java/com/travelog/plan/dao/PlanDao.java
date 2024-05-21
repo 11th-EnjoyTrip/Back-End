@@ -34,9 +34,9 @@ public interface PlanDao {
 
     // selectDetailPlan(여행 상세 계획 조회)
     @Select("SELECT " +
-            "    tp.trip_plan_id AS tripPlanId, " +
+            "tp.trip_plan_id AS tripPlanId, " +
             "DATE_FORMAT(tp.start_date, '%Y-%m-%d') AS startDate, " +
-            "DATE_FORMAT(tp.end_date,'%Y-%m-%d') AS endDate, " +
+            "DATE_FORMAT(tp.end_date, '%Y-%m-%d') AS endDate, " +
             "    tp.title, " +
             "    tp.intro, " +
             "    tp.likes, " +
@@ -236,4 +236,9 @@ public interface PlanDao {
             "SET likes = CASE WHEN likes > 0 THEN likes - 1 ELSE 0 END " +
             "WHERE trip_plan_id = #{tripPlanId}")
     void decrementLikes(Long tripPlanId) throws SQLException;
+
+    @Update("UPDATE trip_plan " +
+            "SET is_shared = NOT is_shared " +
+            "WHERE trip_plan_id = #{tripPlanId}")
+    void updateIsSharedPlan(Long tripPlanId) throws SQLException;
 }

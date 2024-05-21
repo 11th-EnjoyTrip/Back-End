@@ -36,10 +36,10 @@ public class PlanServiceImpl implements PlanService {
     @Transactional
     public void insertPlan(PlanRequestDto planRequestDto, String userId) throws SQLException {
 
-        // TODO#1 : TripPlan 저장, TripPlan 저장한 tripPlanId 가져오기
+        // #1 : TripPlan 저장, TripPlan 저장한 tripPlanId 가져오기
         long tripPlanId = insertTripPlan(planRequestDto, userId);
 
-        // TODO#2 : DetailPlan 저장
+        // #2 : DetailPlan 저장
         insertDetailPlan(planRequestDto.getDayPlanList(),tripPlanId);
     }
 
@@ -100,10 +100,10 @@ public class PlanServiceImpl implements PlanService {
     @Transactional
     public void deleteTripPlan(int tripPlanId,String userId) throws SQLException {
 
-        // TODO : 해당 tripPlan이 userId가 작성한 것이 맞는지 확인
+        // #1 해당 tripPlan이 userId가 작성한 것이 맞는지 확인
         verifyUserTripPlan(tripPlanId,userId);
 
-        // TODO : 여행 계획 삭제
+        // #2 여행 계획 삭제
         planDao.deleteTripPlan(tripPlanId,userId);
 
     }
@@ -111,33 +111,39 @@ public class PlanServiceImpl implements PlanService {
     @Override
     @Transactional
     public void updatePlan(Long tripPlanId, PlanRequestDto planRequestDto) throws SQLException {
-        //TODO#1 : planRequestDto의 TripPlan 부분 수정
+        // #1 : planRequestDto의 TripPlan 부분 수정
         updateTripPlan(tripPlanId,planRequestDto);
 
-        //TODO#2 : 해당 day detailPlan 전체 삭제
+        // #2 : 해당 day detailPlan 전체 삭제
         deleteDetailPlan(tripPlanId);
 
-        //TODO#3 : 해당 day들 detailPlan에 삽입
+        // #3 : 해당 day들 detailPlan에 삽입
         insertDetailPlan(planRequestDto.getDayPlanList(),tripPlanId);
     }
 
     @Override
     @Transactional
     public void insertPlanLike(Long tripPlanId,String userId) throws SQLException {
-        // TODO#1 : 여행 계획 좋아요 삽입
+        // #1 : 여행 계획 좋아요 삽입
         planDao.insertPlanLike(tripPlanId,userId);
 
-        // TODO#2 : 해당 여행 계획에 likes+1
+        // #2 : 해당 여행 계획에 likes+1
         planDao.incrementLikes(tripPlanId);
     }
 
     @Override
     public void deletePlanLike(Long tripPlanId, String userId) throws SQLException {
-        // TODO#1 : 여행 계획 좋아요 삭제
+        // #1 : 여행 계획 좋아요 삭제
         planDao.deletePlanLike(tripPlanId,userId);
 
-        // TODO#2 : 해당 여행 계획에 likes-1
+        // #2 : 해당 여행 계획에 likes-1
         planDao.decrementLikes(tripPlanId);
+    }
+
+    // 여행 계획 공유 여부 변경
+    @Override
+    public void updateIsSharedPlan(Long tripPlanId) throws SQLException {
+        planDao.updateIsSharedPlan(tripPlanId);
     }
 
     // 여행 계획 수정
