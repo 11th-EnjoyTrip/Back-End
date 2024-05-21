@@ -8,7 +8,9 @@ import java.util.List;
 public interface ReviewService {
     void write(ReviewDto reviewDto) throws Exception;
     void delete(int review_id);
-    void reviewLike(int like_id, String userid);
+    void addLike(int like_id, String userid);
+    void deleteLike(int review_id, String userid);
+
     void update(String text, int review_id);
 
     List<ReviewDto> getReviewsByUserid(String user_id) throws Exception;

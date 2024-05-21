@@ -166,18 +166,15 @@ public class ReviewController {
         return new ResponseEntity<>(result, status);
     }
 
-    @PostMapping("/like")
-    public ResponseEntity<?> like(@RequestBody ReviewDto reviewDto, HttpServletRequest request) throws Exception {
+    @PostMapping("/addLike")
+    public ResponseEntity<?> like(@RequestBody Map<String, Integer> reviewDto, HttpServletRequest request) throws Exception {
         Map<String, Object> result = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
 
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
                 String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
-                System.out.println(userid);
-                System.out.println(reviewDto.getReview_id());
-                reviewServiceImpl.reviewLike(reviewDto.getReview_id(), userid);
-
+                reviewServiceImpl.addLike(reviewDto.get("review_id"), userid);
                 result.put("message", "SUCCESS");
                 status = HttpStatus.OK;
             } catch (Exception e) {
@@ -185,6 +182,27 @@ public class ReviewController {
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
         } else {
+            result.put("message", "Token Error");
+            status = HttpStatus.UNAUTHORIZED;
+        }
+
+        return new ResponseEntity<>(result, status);
+    }
+    @DeleteMapping("/deleteLike")
+    public ResponseEntity<?> deleteLike(@RequestBody Map<String, Integer> review_id, HttpServletRequest request) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
+            try{
+                String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
+                reviewServiceImpl.deleteLike(review_id.get("review_id"), userid);
+                result .put("message", "SUCCESS");
+                status = HttpStatus.OK;
+            }catch(Exception e){
+                result.put("message", e.getMessage());
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }else{
             result.put("message", "Token Error");
             status = HttpStatus.UNAUTHORIZED;
         }

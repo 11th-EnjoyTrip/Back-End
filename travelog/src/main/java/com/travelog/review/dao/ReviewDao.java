@@ -15,6 +15,7 @@ public interface ReviewDao {
 
     @Select(value = "SELECT * FROM review WHERE userid = #{user_id}")
     List<ReviewDto> getReviewsByUserid(String user_id) throws Exception;
+
     @Select(value = "SELECT * FROM review WHERE content_id = #{content_id}")
     List<ReviewDto> getReviewsByContentId(String content_id) throws Exception;
 
@@ -23,6 +24,7 @@ public interface ReviewDao {
 
     @Select(value = "SELECT userid FROM review WHERE content_id = #{content_id}")
     String getIdByContent_id(String content_id);
+
     @Select(value = "SELECT userid FROM review WHERE review_id = #{review_id}")
     String getIdByReview_id(int review_id);
 
@@ -30,5 +32,8 @@ public interface ReviewDao {
     void delete(int review_id);
 
     @Insert(value = "INSERT INTO review_like(review_id, userid) values (#{review_id}, #{userid})")
-    void reviewLike(ReviewLikeDto reviewLikeDto);
+    void addLike(ReviewLikeDto reviewLikeDto);
+
+    @Delete(value = " DELETE FROM review_like where review_id=#{review_id} AND userid = #{userid}")
+    void deleteLike(ReviewLikeDto reviewLikeDto);
 }

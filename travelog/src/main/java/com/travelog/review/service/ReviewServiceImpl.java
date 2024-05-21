@@ -52,15 +52,22 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void reviewLike(int review_id, String userid) {
+    public void addLike(int review_id, String userid) {
         ReviewLikeDto reviewLikeDto = new ReviewLikeDto();
         reviewLikeDto.setReview_id(review_id);
         reviewLikeDto.setUserid(userid);
 
-        System.out.println(reviewLikeDto.toString());
-//        reviewDao.reviewLike(reviewLikeDto);
+        reviewDao.addLike(reviewLikeDto);
+    }
 
-        reviewDao.reviewLike(reviewLikeDto);
+    @Override
+    public void deleteLike(int review_id, String userid) {
+        ReviewLikeDto reviewLikeDto = new ReviewLikeDto();
+        reviewLikeDto.setReview_id(review_id);
+        reviewLikeDto.setUserid(userid);
+
+        reviewDao.deleteLike(reviewLikeDto);
+
     }
 
 
