@@ -144,7 +144,7 @@ public class PlanController {
     }
 
     //여행 계획 삭제 (DELETE)
-    @DeleteMapping("/{tripPlanId}")
+    @PatchMapping("/{tripPlanId}")
     public ResponseEntity<?> deleteTripPlan(@PathVariable("tripPlanId") int tripPlanId,HttpServletRequest request) {
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {

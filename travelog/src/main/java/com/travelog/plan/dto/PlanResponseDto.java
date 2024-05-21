@@ -21,6 +21,7 @@ public class PlanResponseDto {
     private String title;
     private String intro;
     private int isShared;
+    private boolean status;
     private int likes;
     private String updatedAt;
     private String userid;

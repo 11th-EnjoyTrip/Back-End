@@ -44,6 +44,7 @@ public interface PlanDao {
             "    tp.userid, " +
             "    m.nickname, " +
             "    m.username, " +
+            "    tp.status, "+
             "tp.is_shared AS isShared, "+
             "    (SELECT COUNT(*) > 0 FROM plan_like pl WHERE pl.userid = #{userId} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
             "    ( " +
@@ -121,6 +122,7 @@ public interface PlanDao {
             "m.nickname, " +
             "m.username, " +
             "tp.is_shared AS isShared, "+
+            "    tp.status, "+
             "EXISTS(SELECT 1 FROM plan_like pl WHERE pl.userid = #{data.userId} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
             "JSON_ARRAYAGG( " +
             "JSON_OBJECT( " +
@@ -137,7 +139,7 @@ public interface PlanDao {
             "detail_plan dp ON tp.trip_plan_id = dp.trip_plan_id " +
             "JOIN " +
             "attraction_info ai ON dp.content_id = ai.content_id " +
-            "WHERE tp.is_shared = true " +
+            "WHERE tp.is_shared = true AND tp.status = true " +
             "AND tp.title LIKE CONCAT('%', #{data.keyword}, '%') " +
             "GROUP BY " +
             "tp.trip_plan_id " +
@@ -156,6 +158,7 @@ public interface PlanDao {
             "m.nickname, " +
             "m.username, " +
             "tp.is_shared AS isShared, "+
+            "    tp.status, "+
             "EXISTS(SELECT 1 FROM plan_like pl WHERE pl.userid = #{data} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
             "JSON_ARRAYAGG( " +
             "JSON_OBJECT( " +
@@ -174,7 +177,7 @@ public interface PlanDao {
             "attraction_info ai ON dp.content_id = ai.content_id " +
             "JOIN " +
             "plan_like pl ON tp.trip_plan_id = pl.trip_plan_id " +
-            "WHERE tp.is_shared = true AND pl.userid = #{data} " +
+            "WHERE tp.is_shared = true AND tp.status = true AND pl.userid = #{data} " +
             "GROUP BY tp.trip_plan_id " +
             "LIMIT #{pageable.pageSize} OFFSET #{pageable.offset}")
     List<Map<String, Object>> getLikePlanList(RequestList<?> requestList) throws SQLException;
@@ -191,6 +194,7 @@ public interface PlanDao {
             "    m.nickname, " +
             "    m.username, " +
             "    tp.is_shared AS isShared, "+
+            "    tp.status, "+
             "EXISTS(SELECT 1 FROM plan_like pl WHERE pl.userid = #{data} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
             "    JSON_ARRAYAGG( " +
             "        JSON_OBJECT( " +
@@ -209,14 +213,14 @@ public interface PlanDao {
             "JOIN " +
             "    attraction_info ai ON dp.content_id = ai.content_id " +
             "WHERE " +
-            "    tp.userid = #{data} " +
+            "    tp.userid = #{data} AND tp.status = true " +
             "GROUP BY " +
             "    tp.trip_plan_id " +
             "LIMIT #{pageable.pageSize} OFFSET #{pageable.offset}")
     List<Map<String, Object>> getMyPlanList(RequestList<?> requestList) throws SQLException;
 
     // 여행 계획 삭제
-    @Delete("DELETE FROM trip_plan WHERE trip_plan_id = #{tripPlanId} AND userid=#{userId}")
+    @Update("update trip_plan set status = false  WHERE trip_plan_id = #{tripPlanId} AND userid=#{userId}")
     void deleteTripPlan(int tripPlanId,String userId) throws SQLException;
 
     // 해당 tripPlan이 userId가 작성한 것이 맞는지 확인
