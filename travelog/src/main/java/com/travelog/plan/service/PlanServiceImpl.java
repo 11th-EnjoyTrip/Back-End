@@ -46,11 +46,12 @@ public class PlanServiceImpl implements PlanService {
     // #2 공유된 여행 계획 리스트만 조회
     @Override
     @Transactional
-    public Page<Map<String, Object>> getSharedPlanList(Pageable pageable,String userid) throws SQLException {
+    public Page<Map<String, Object>> getSharedPlanList(Pageable pageable,String userid,String keyword) throws SQLException {
 
         //빌더 패턴으로 data,pageable 파라미터에 데이터 주입
         RequestList<?> requestList = RequestList.builder()
-                .data(userid)
+                .data(SharedPlanRequestDto.builder()
+                        .userId(userid).keyword(keyword).build())
                 .pageable(pageable)
                 .build();
 
