@@ -1,4 +1,4 @@
-package com.travelog.member.config;
+package com.travelog.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
