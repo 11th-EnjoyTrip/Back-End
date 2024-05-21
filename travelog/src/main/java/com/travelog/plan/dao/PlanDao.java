@@ -44,6 +44,7 @@ public interface PlanDao {
             "    tp.userid, " +
             "    m.nickname, " +
             "    m.username, " +
+            "tp.is_shared AS isShared, "+
             "    (SELECT COUNT(*) > 0 FROM plan_like pl WHERE pl.userid = #{userId} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
             "    ( " +
             "        SELECT JSON_ARRAYAGG( " +
@@ -119,6 +120,7 @@ public interface PlanDao {
             "tp.userid, " +
             "m.nickname, " +
             "m.username, " +
+            "tp.is_shared AS isShared, "+
             "EXISTS(SELECT 1 FROM plan_like pl WHERE pl.userid = #{data.userId} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
             "JSON_ARRAYAGG( " +
             "JSON_OBJECT( " +
@@ -153,6 +155,7 @@ public interface PlanDao {
             "tp.userid, " +
             "m.nickname, " +
             "m.username, " +
+            "tp.is_shared AS isShared, "+
             "EXISTS(SELECT 1 FROM plan_like pl WHERE pl.userid = #{data} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
             "JSON_ARRAYAGG( " +
             "JSON_OBJECT( " +
@@ -187,6 +190,7 @@ public interface PlanDao {
             "    tp.userid, " +
             "    m.nickname, " +
             "    m.username, " +
+            "    tp.is_shared AS isShared, "+
             "EXISTS(SELECT 1 FROM plan_like pl WHERE pl.userid = #{data} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
             "    JSON_ARRAYAGG( " +
             "        JSON_OBJECT( " +
