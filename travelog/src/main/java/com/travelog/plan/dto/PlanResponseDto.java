@@ -20,6 +20,7 @@ public class PlanResponseDto {
     private String endDate;
     private String title;
     private String intro;
+    private int isShared;
     private int likes;
     private String updatedAt;
     private String userid;
@@ -27,6 +28,7 @@ public class PlanResponseDto {
     private String username;
     private boolean isLikedPlan;
     private String dayPlanList;
+
     // private List<DayPlanResponseDto> dayPlanList;
 
 }
