@@ -16,8 +16,10 @@ public class AttractionDetailDto {
     private String addr2;
     private Long zipcode;
     private String tel;
+    private Boolean isLikedAttraction;
     private String firstImage;
     private String firstImage2;
+    private int likes;
     private Long sidoCode;
     private String sidoName;
     private BigDecimal latitude;

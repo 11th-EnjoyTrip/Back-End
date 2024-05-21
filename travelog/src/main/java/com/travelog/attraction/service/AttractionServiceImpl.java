@@ -28,7 +28,7 @@ public class AttractionServiceImpl implements  AttractionService{
     }
 
     @Override
-    public Page<Map<String, Object>> getAttractionList(AttractionRequestDto attractionRequestDto, Pageable pageable) throws Exception {
+    public Page<Map<String, Object>> getAttractionList(AttractionRequestDto attractionRequestDto, Pageable pageable,String userId) throws Exception {
 
         //빌더 패턴으로 data,pageable 파라미터에 데이터 주입
         RequestList<?> requestList = RequestList.builder()
@@ -36,14 +36,14 @@ public class AttractionServiceImpl implements  AttractionService{
                 .pageable(pageable)
                 .build();
 
-        List<Map<String,Object>> content = attractionDao.getAttractionList(requestList);
+        List<Map<String,Object>> content = attractionDao.getAttractionList(requestList,userId);
 
         return new PageImpl<>(content);
     }
 
     @Override
-    public AttractionDetailDto getAttractionDetail(int id) throws SQLException {
-        return attractionDao.getAttractionDetail(id);
+    public AttractionDetailDto getAttractionDetail(int contentId,String userId) throws SQLException {
+        return attractionDao.getAttractionDetail(contentId,userId);
     }
 
     @Override
@@ -52,5 +52,23 @@ public class AttractionServiceImpl implements  AttractionService{
 
         AttractionInfoDto attraction = attractionDao.findAttractionById(contentId);
         return attraction;
+    }
+
+    @Override
+    public void insertAttractionLike(Long contentId, String userId) throws Exception {
+        // #1 : 관광지 좋아요 삽입
+        attractionDao.insertAttractionLike(contentId,userId);
+
+        // #2 : 해당 관광지에 likes+1
+        attractionDao.incrementAttrLikes(contentId);
+    }
+
+    @Override
+    public void deleteAttractionLike(Long contentId, String userId) throws Exception {
+        // #1 : 관광지 좋아요 삭제
+        attractionDao.deleteAttractionLike(contentId,userId);
+
+        // #2 : 해당 관광지에 likes-1
+        attractionDao.decrementAttrLikes(contentId);
     }
 }
