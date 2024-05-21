@@ -74,7 +74,11 @@ public interface PlanDao {
             "                                        ELSE 'PT' " +
             "                                    END, " +
             "                        'firstImage', ai.first_image, " +
-            "                        'firstImage2', ai.first_image2 " +
+            "                        'firstImage2', ai.first_image2, " +
+            "                        'addr1',ai.addr1, "+
+            "                        'addr2',ai.addr2, "+
+            "                        'likes',ai.likes, "+
+            "                        'isLikedAttraction',(SELECT COUNT(*) > 0 FROM attraction_like al WHERE al.userid = #{userId} AND ai.content_id = al.content_id) "+
             "                    ) " +
             "                ) AS detailPlanList " +
             "            FROM " +
