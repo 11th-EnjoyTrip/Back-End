@@ -1,10 +1,12 @@
 package com.travelog.review.dao;
 
+import com.travelog.review.dto.ResponseReviewDto;
 import com.travelog.review.dto.ReviewDto;
 import com.travelog.review.dto.ReviewLikeDto;
 import org.apache.ibatis.annotations.*;
 
 import javax.annotation.processing.SupportedSourceVersion;
+import java.sql.SQLException;
 import java.util.List;
 
 @Mapper
@@ -28,6 +30,15 @@ public interface ReviewDao {
     @Select(value = "SELECT userid FROM review WHERE review_id = #{review_id}")
     String getIdByReview_id(int review_id);
 
+    @Select(value = "SELECT a.review_id, a.review_text, a.content_id " +
+            "FROM review as a join review_like as b on a.review_id " +
+            "WHERE a.userid = #{userid}")
+    List<ResponseReviewDto> getResponseReviewsByUserid(String review_id);
+
+    @Select(value = "SELECT a.content_id, a.review_id, a.review_text, a.content_id " +
+            "FROM review as a join review_like as b ON a.review_id = b.review_id " +
+            "WHERE a.userid = #{userid};")
+    List<ResponseReviewDto> getReviewLikeByUserid(String userid) throws SQLException;
     @Delete(value = "DELETE FROM review WHERE review_id = #{review_id}")
     void delete(int review_id);
 

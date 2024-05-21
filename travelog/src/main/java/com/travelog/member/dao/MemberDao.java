@@ -2,6 +2,8 @@ package com.travelog.member.dao;
 
 import com.travelog.member.dto.MemberDto;
 import com.travelog.member.dto.ResponseMemberDto;
+import com.travelog.review.dto.ResponseReviewDto;
+import com.travelog.review.dto.ReviewDto;
 import org.apache.ibatis.annotations.*;
 
 import java.sql.SQLException;
@@ -56,6 +58,11 @@ public interface MemberDao {
 
     @Select(value = "SELECT userid, username, email, location, nickname FROM member WHERE token = #{token}")
     ResponseMemberDto getByToken(String token) throws SQLException;
+
+    @Select(value = "SELECT a.content_id, a.review_id, a.review_text, a.content_id " +
+            "FROM review as a join review_like as b ON a.review_id = b.review_id " +
+            "WHERE a.userid = #{userid};")
+    List<ResponseReviewDto> getReviewLikeByUserid(String userid) throws SQLException;
 
     @Select(value = "SELECT userid, username, email, location, nickname FROM member WHERE userid = #{userid} and password = #{password}")
     ResponseMemberDto login(MemberDto member) throws SQLException;

@@ -2,6 +2,7 @@ package com.travelog.review.controller;
 
 import com.travelog.member.service.MemberServiceImpl;
 import com.travelog.member.util.JWTUtil;
+import com.travelog.review.dto.ResponseReviewDto;
 import com.travelog.review.dto.ReviewDto;
 import com.travelog.review.dto.UpdateReviewDto;
 import com.travelog.review.service.ReviewService;
@@ -166,6 +167,7 @@ public class ReviewController {
         return new ResponseEntity<>(result, status);
     }
 
+    // 리뷰 좋아요 추가
     @PostMapping("/addLike")
     public ResponseEntity<?> like(@RequestBody Map<String, Integer> reviewDto, HttpServletRequest request) throws Exception {
         Map<String, Object> result = new HashMap<>();
@@ -188,6 +190,8 @@ public class ReviewController {
 
         return new ResponseEntity<>(result, status);
     }
+
+    // 리뷰 좋아요 삭제
     @DeleteMapping("/deleteLike")
     public ResponseEntity<?> deleteLike(@RequestBody Map<String, Integer> review_id, HttpServletRequest request) throws Exception {
         Map<String, Object> result = new HashMap<>();
@@ -207,6 +211,31 @@ public class ReviewController {
             status = HttpStatus.UNAUTHORIZED;
         }
 
+        return new ResponseEntity<>(result, status);
+    }
+
+    // 내가 좋아요 누른 리뷰
+    @PostMapping("/liked")
+    public ResponseEntity<?> liked(HttpServletRequest request) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
+            try{
+                String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
+                List<ResponseReviewDto[]> list = reviewServiceImpl.getReviewLikeByUserid(userid);
+                result.put("message", "SUCCESS");
+                result.put("liked reviews", list);
+                status = HttpStatus.OK;
+
+            }catch(Exception e){
+                result.put("message", e.getMessage());
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }else{
+            result.put("message", "Token Error");
+            status = HttpStatus.UNAUTHORIZED;
+
+        }
         return new ResponseEntity<>(result, status);
     }
 }

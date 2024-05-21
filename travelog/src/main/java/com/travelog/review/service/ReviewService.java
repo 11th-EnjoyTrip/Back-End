@@ -1,8 +1,10 @@
 package com.travelog.review.service;
 
+import com.travelog.review.dto.ResponseReviewDto;
 import com.travelog.review.dto.ReviewDto;
 import com.travelog.review.dto.ReviewLikeDto;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface ReviewService {
@@ -15,6 +17,8 @@ public interface ReviewService {
 
     List<ReviewDto> getReviewsByUserid(String user_id) throws Exception;
     List<ReviewDto> getReviewsByContentId(String content_id) throws Exception;
+    List<ResponseReviewDto[]> getReviewLikeByUserid(String userid) throws Exception;
+    List<ResponseReviewDto> getResponseReviewsByUserid(String user_id) throws Exception;
 
     String getIdByReview_id(int review_id);
     String getIdByContent_id(String content_id);
