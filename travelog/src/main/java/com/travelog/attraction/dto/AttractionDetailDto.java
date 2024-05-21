@@ -17,6 +17,7 @@ public class AttractionDetailDto {
     private Long zipcode;
     private String tel;
     private String firstImage;
+    private String firstImage2;
     private Long sidoCode;
     private String sidoName;
     private BigDecimal latitude;

@@ -23,7 +23,7 @@ public interface AttractionDao {
             "        WHEN content_type_id = 38 THEN '쇼핑' " +
             "        WHEN content_type_id = 39 THEN '음식' " +
             "        ELSE '기타' " +
-            "    END AS contentTypeName, title, first_image AS firstImage, " +
+            "    END AS contentTypeName, title, first_image AS firstImage, first_image2 AS firstImage2, " +
             "    ai.sido_code AS sidoCode, s.sido_name AS sidoName,latitude, longitude " +
             "FROM attraction_info ai " +
             "JOIN sido s ON ai.sido_code = s.sido_code " +
@@ -45,7 +45,7 @@ public interface AttractionDao {
             "    WHEN content_type_id = 39 THEN '음식' " +
             "    ELSE '기타' " +
             "END AS content_type_name, " +
-            "title, addr1, addr2, zipcode, tel, first_image, " +
+            "title, addr1, addr2, zipcode, tel, first_image,first_image2, " +
             "ai.sido_code, s.sido_name, latitude, longitude, ad.overview " +
             "FROM attraction_info ai " +
             "JOIN sido s ON ai.sido_code = s.sido_code " +
@@ -55,6 +55,7 @@ public interface AttractionDao {
     @Result(property = "contentTypeId",column = "content_type_id")
     @Result(property = "contentTypeName",column = "content_type_name")
     @Result(property = "firstImage",column = "first_image")
+    @Result(property = "firstImage2",column = "first_image2")
     @Result(property = "sidoCode",column = "sido_code")
     @Result(property = "sidoName",column = "sido_name")
     AttractionDetailDto getAttractionDetail(int id) throws SQLException;
