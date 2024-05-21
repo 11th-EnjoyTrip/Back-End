@@ -11,6 +11,7 @@ public class ReviewDto {
     private int content_id;
     private String nickname;
     private int likes;
-    private String time;
+    private String created_time;
+    private String updated_time;
     private String review_text;
 }

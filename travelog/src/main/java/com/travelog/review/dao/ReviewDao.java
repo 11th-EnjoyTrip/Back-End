@@ -17,8 +17,8 @@ public interface ReviewDao {
     @Select(value = "SELECT * FROM review WHERE content_id = #{content_id}")
     List<ReviewDto> getReviewsByContentId(String content_id) throws Exception;
 
-    @Update(value = "UPDATE review set review_text = #{text} WHERE content_id = #{content_id} ")
-    void update(String text, String content_id);
+    @Update(value = "UPDATE review set review_text = #{text}, update_time = now() WHERE review_id = #{review_id} ")
+    void update(String text, int review_id);
 
     @Select(value = "SELECT userid FROM review WHERE content_id = #{content_id}")
     String getIdByContent_id(String content_id);
