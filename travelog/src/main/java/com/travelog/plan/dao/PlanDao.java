@@ -115,7 +115,7 @@ public interface PlanDao {
             "tp.userid, " +
             "m.nickname, " +
             "m.username, " +
-            "EXISTS(SELECT 1 FROM plan_like pl WHERE pl.userid = #{data} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
+            "EXISTS(SELECT 1 FROM plan_like pl WHERE pl.userid = #{data.userId} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
             "JSON_ARRAYAGG( " +
             "JSON_OBJECT( " +
             "'contentId', dp.content_id, " +
@@ -132,6 +132,7 @@ public interface PlanDao {
             "JOIN " +
             "attraction_info ai ON dp.content_id = ai.content_id " +
             "WHERE tp.is_shared = true " +
+            "AND tp.title LIKE CONCAT('%', #{data.keyword}, '%') " +
             "GROUP BY " +
             "tp.trip_plan_id " +
             "LIMIT #{pageable.pageSize} OFFSET #{pageable.offset}")

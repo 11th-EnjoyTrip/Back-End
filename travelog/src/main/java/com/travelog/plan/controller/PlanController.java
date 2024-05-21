@@ -31,7 +31,7 @@ public class PlanController {
         this.planService = planService;
     }
 
-    //TODO : 여행 계획 등록 (POST)
+    //여행 계획 등록 (POST)
     @PostMapping("")
     public ResponseEntity<?> insertTripPlan(@RequestBody PlanRequestDto planRequestDto, HttpServletRequest request){
         // 사용자 인증 로직
@@ -56,14 +56,15 @@ public class PlanController {
         }
     }
 
-    //TODO : 여행 계획 리스트 조회 ( 공유한 리스트만 조회 ) (GET)
+    //여행 계획 리스트 조회 ( 공유한 리스트만 조회 ) (GET)
     @GetMapping("/shared")
-    public ResponseEntity<?> getSharedTripPlans(@PageableDefault(size=6) Pageable pageable,HttpServletRequest request) {
+    public ResponseEntity<?> getSharedTripPlans(@RequestParam String keyword,@PageableDefault(size=6) Pageable pageable,HttpServletRequest request) {
+
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
                 String id = jwtUtil.getUserId(request.getHeader("Authorization"));
                 // 공유된 리스트 조회
-                Page<Map<String, Object>> sharedPlans = planService.getSharedPlanList(pageable, id);
+                Page<Map<String, Object>> sharedPlans = planService.getSharedPlanList(pageable, id,keyword);
                 return new ResponseEntity<>(sharedPlans.getContent(), HttpStatus.OK);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -73,7 +74,13 @@ public class PlanController {
         }
     }
 
-    //TODO : 여행 계획 상세 조회(개별) (GET)
+//    //TODO : 여행 계획 공유 여부 변경 (PATCH)
+//    @PatchMapping("/shared/{tripPlanId}")
+//    public ResponseEntity<?> updateIsSharedPlan(@PathVariable("tripPlanId") Long tripPlanId, HttpServletRequest request){
+//
+//    }
+
+    //여행 계획 상세 조회(개별) (GET)
     @GetMapping("/{tripPlanId}")
     public ResponseEntity<?> getDetailPlan(@PathVariable("tripPlanId") Long tripPlanId,HttpServletRequest request){
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
@@ -91,7 +98,7 @@ public class PlanController {
         }
     }
 
-    //TODO : 좋아요한 여행 계획 리스트 조회 (GET)
+    //좋아요한 여행 계획 리스트 조회 (GET)
     @GetMapping("/like")
     public ResponseEntity<?> getLikeTripPlans(@PageableDefault(size=6) Pageable pageable,HttpServletRequest request) {
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
@@ -108,7 +115,7 @@ public class PlanController {
         }
     }
 
-    //TODO : 내가 만든 여행 계획 리스트 조회 (GET)
+    //내가 만든 여행 계획 리스트 조회 (GET)
     @GetMapping("")
     public ResponseEntity<?> getMyTripPlans(@PageableDefault(size=6) Pageable pageable,HttpServletRequest request) {
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
@@ -125,7 +132,7 @@ public class PlanController {
         }
     }
 
-    //TODO : 여행 계획 삭제 (DELETE)
+    //여행 계획 삭제 (DELETE)
     @DeleteMapping("/{tripPlanId}")
     public ResponseEntity<?> deleteTripPlan(@PathVariable("tripPlanId") int tripPlanId,HttpServletRequest request) {
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
@@ -143,7 +150,7 @@ public class PlanController {
         }
     }
 
-    //TODO : 여행 상세 계획 수정 (PUT)
+    //여행 상세 계획 수정 (PUT)
     @PutMapping("/{tripPlanId}")
     public ResponseEntity<?>updateDetailPlan(@PathVariable("tripPlanId") Long tripPlanId,
                                              @RequestBody PlanRequestDto planRequestDto,HttpServletRequest request){
@@ -162,7 +169,7 @@ public class PlanController {
         }
     }
 
-    // TODO : 여행 계획 좋아요 등록
+    //여행 계획 좋아요 등록
     @PostMapping("/like")
     public ResponseEntity<?> insertPlanLike(@RequestBody PlanLikeRequest planLikeRequest,HttpServletRequest request){
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
@@ -179,7 +186,7 @@ public class PlanController {
         }
     }
 
-    // TODO : 여행 계획 좋아요 삭제
+    //여행 계획 좋아요 삭제
     @DeleteMapping("/like")
     public ResponseEntity<?> deletePlanLike(@RequestBody PlanLikeRequest planLikeRequest,HttpServletRequest request){
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
