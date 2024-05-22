@@ -25,13 +25,12 @@ public class AttractionController {
         this.jwtUtil = jwtUtil;
     }
 
-
     // 관광지 카테고리,지역,키워드별 조회(페이지네이션)
     @GetMapping("")
     public ResponseEntity<?> getAttractionList(@ModelAttribute AttractionRequestDto attractionRequestDto, @PageableDefault(size=20) Pageable pageable, HttpServletRequest request) {
         // # request에 토큰 값 있는지 체크(로그인한 회원 인지 비회원이지 확인)
         // 비회원인 경우
-        if(request.getHeader("Authorization") == null) {
+        if(request.getHeader("Authorization").equals("")) {
             try{
                 return ResponseEntity.ok(attractionService.getAttractionList(attractionRequestDto, pageable,null).getContent()) ;
             }catch (Exception e) {
@@ -54,7 +53,7 @@ public class AttractionController {
     // 관광지 상세 조회
     @GetMapping("/{contentId}")
     public ResponseEntity<?> getAttractionDetail(@PathVariable("contentId") int contentId, HttpServletRequest request) {
-        if(request.getHeader("Authorization") == null) {
+        if(request.getHeader("Authorization").equals("")) {
             try{
                 return ResponseEntity.ok(attractionService.getAttractionDetail(contentId,null));
             }catch (Exception e) {
