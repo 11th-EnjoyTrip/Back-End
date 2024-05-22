@@ -3,12 +3,15 @@ package com.travelog.member.service;
 import com.travelog.member.dao.MemberDao;
 import com.travelog.member.dto.MemberDto;
 import com.travelog.member.dto.ResponseMemberDto;
+import com.travelog.review.dto.ResponseReviewDto;
+import com.travelog.review.dto.ReviewDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -71,6 +74,28 @@ public class MemberServiceImpl implements MemberService {
         memberDao.regist(memberDto);
 
         return HttpStatus.CREATED;
+    }
+
+    @Override
+    public List<ResponseReviewDto[]> getReviewLikeByUserid(String userid) throws SQLException {
+
+        List<ResponseReviewDto[]> result = new ArrayList<>();
+        List<ResponseReviewDto> reviews = memberDao.getReviewLikeByUserid(userid);
+        System.out.println("결과로 받아온 리뷰 개수 : " + reviews.size());
+        int listIdx = 0;
+        int idx = 0;
+
+        result.add(new ResponseReviewDto[10]);
+        for (ResponseReviewDto review : reviews) {
+            result.get(listIdx)[idx] = review;
+            if(++idx == 10) {
+                idx = 0;
+                result.add(new ResponseReviewDto[10]);
+                listIdx++;
+            }
+        }
+        System.out.println(result);
+        return result;
     }
 
     @Override

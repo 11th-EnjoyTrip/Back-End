@@ -3,10 +3,16 @@ package com.travelog.member.controller;
 import com.travelog.member.dto.MemberDto;
 import com.travelog.member.dto.ResponseMemberDto;
 import com.travelog.member.service.MemberService;
+import com.travelog.member.service.MemberServiceImpl;
 import com.travelog.member.util.JWTUtil;
+import com.travelog.review.dto.ResponseReviewDto;
+import com.travelog.review.dto.ReviewDto;
 import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 @RestController
@@ -26,11 +33,13 @@ import java.util.Map;
 public class MemberController {
     private final MemberService memberService;
     private final JWTUtil jwtUtil;
+    private final MemberServiceImpl memberServiceImpl;
 
     @Autowired
-    public MemberController(MemberService memberService, JWTUtil jwtUtil) {
+    public MemberController(MemberService memberService, JWTUtil jwtUtil, MemberServiceImpl memberServiceImpl) {
         this.memberService = memberService;
         this.jwtUtil = jwtUtil;
+        this.memberServiceImpl = memberServiceImpl;
     }
 
     // 회원 목록 조회
@@ -95,10 +104,9 @@ public class MemberController {
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
             String id = jwtUtil.getUserId(request.getHeader("Authorization"));
-//            String id = memberService.getByToken(request.getHeader("Authorization")).getId();
             memberService.deleteRefreshToken(id);
             resultMap.put("message", "SUCCESS");
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -120,7 +128,7 @@ public class MemberController {
 
             resultMap.put("access-token", accessToken);
             resultMap.put("message", "success");
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else {
             status = HttpStatus.UNAUTHORIZED;
         }
@@ -131,19 +139,21 @@ public class MemberController {
     @GetMapping("/info")
     public ResponseEntity<?> getInfo(HttpServletRequest request) throws Exception {
 
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new TreeMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        // 1. token 일치 확인
-        // 2.
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
-                // request token -> id
+                // 1. 회원 정보
                 String id = jwtUtil.getUserId(request.getHeader("Authorization"));
                 ResponseMemberDto memberDto = memberService.getResponseMemberDtoById(id);
+                resultMap.put("message", "success");
                 resultMap.put("info", memberDto);
+                // 2. 좋아요 정보
+                List<ResponseReviewDto[]> result = memberServiceImpl.getReviewLikeByUserid(id);
+                resultMap.put("reviews", result);
+
                 status = HttpStatus.OK;
             } catch (Exception e) {
-                log.info(e.getMessage());
                 resultMap.put("message", e.getMessage());
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
