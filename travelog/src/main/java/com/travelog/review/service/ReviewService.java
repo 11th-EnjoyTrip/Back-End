@@ -16,7 +16,7 @@ public interface ReviewService {
     void update(String text, int review_id);
 
     List<ReviewDto> getReviewsByUserid(String user_id) throws Exception;
-    List<ReviewDto> getReviewsByContentId(String content_id) throws Exception;
+    List<ResponseReviewDto[]> getReviewsByContentId(String content_id) throws Exception;
     List<ResponseReviewDto[]> getReviewLikeByUserid(String userid) throws Exception;
     List<ResponseReviewDto> getResponseReviewsByUserid(String user_id) throws Exception;
     List<ReviewDto> getTopReview() throws SQLException;

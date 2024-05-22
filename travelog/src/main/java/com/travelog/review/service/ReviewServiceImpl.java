@@ -13,14 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ReviewServiceImpl implements ReviewService{
+public class ReviewServiceImpl implements ReviewService {
     private final ReviewDao reviewDao;
-    private final MemberServiceImpl memberService;
 
     @Autowired
-    public ReviewServiceImpl(ReviewDao reviewDao, MemberServiceImpl memberService) {
+    public ReviewServiceImpl(ReviewDao reviewDao) {
         this.reviewDao = reviewDao;
-        this.memberService = memberService;
     }
 
     @Override
@@ -45,9 +43,28 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public List<ReviewDto> getReviewsByContentId(String content_id) throws Exception {
-        return reviewDao.getReviewsByContentId(content_id);
+    public List<ResponseReviewDto[]> getReviewsByContentId(String content_id) throws Exception {
+        List<ResponseReviewDto[]> result = new ArrayList<>();
+        List<ResponseReviewDto> reviews = reviewDao.getReviewsByContentId(content_id);
+
+        int listIdx = 0;
+        int idx = 0;
+
+        result.add(new ResponseReviewDto[10]);
+
+        for (ResponseReviewDto review : reviews) {
+            if (idx == 10) {
+                idx = 0;
+                result.add(new ResponseReviewDto[10]);
+                listIdx++;
+            }
+            result.get(listIdx)[idx] = review;
+            idx++;
+
+        }
+        return result;
     }
+
     public List<ResponseReviewDto> getResponseReviewsByUserid(String user_id) throws Exception {
         return reviewDao.getResponseReviewsByUserid(user_id);
     }
@@ -61,14 +78,14 @@ public class ReviewServiceImpl implements ReviewService{
     public List<ResponseReviewDto[]> getReviewLikeByUserid(String userid) throws Exception {
         List<ResponseReviewDto[]> result = new ArrayList<>();
         List<ResponseReviewDto> reviews = getResponseReviewsByUserid(userid);
-        System.out.println("결과로 받아온 리뷰 개수 : " + reviews.size());
+
         int listIdx = 0;
         int idx = 0;
 
         result.add(new ResponseReviewDto[10]);
 
         for (ResponseReviewDto review : reviews) {
-            if(idx == 10) {
+            if (idx == 10) {
                 idx = 0;
                 result.add(new ResponseReviewDto[10]);
                 listIdx++;
@@ -77,15 +94,6 @@ public class ReviewServiceImpl implements ReviewService{
             idx++;
 
         }
-        for(int i = 0; i < result.size(); i ++){
-            for(int j = 0; j < result.get(i).length; j++){
-                if(result.get(i)[j] != null){
-                    System.out.println(result.get(i)[j]);
-                }
-            }
-
-        }
-
         return result;
     }
 
@@ -107,9 +115,11 @@ public class ReviewServiceImpl implements ReviewService{
         reviewDao.addLike(reviewLikeDto);
         reviewDao.updateLike(review_id);
     }
+
     public void updateLike(int review_id) {
         reviewDao.updateLike(review_id);
     }
+
     @Override
     public void deleteLike(int review_id, String userid) {
         ReviewLikeDto reviewLikeDto = new ReviewLikeDto();

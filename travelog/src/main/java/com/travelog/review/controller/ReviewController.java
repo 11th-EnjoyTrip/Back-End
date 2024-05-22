@@ -66,7 +66,7 @@ public class ReviewController {
         Map<String, Object> result = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
-            List<ReviewDto> list = reviewService.getReviewsByContentId(content_id);
+            List<ResponseReviewDto[]> list = reviewService.getReviewsByContentId(content_id);
             result.put("message", "SUCCESS");
             result.put("reviews", list);
             status = HttpStatus.OK;

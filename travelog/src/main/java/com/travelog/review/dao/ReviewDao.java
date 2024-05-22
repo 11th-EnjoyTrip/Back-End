@@ -18,8 +18,8 @@ public interface ReviewDao {
     @Select(value = "SELECT * FROM review WHERE userid = #{user_id}")
     List<ReviewDto> getReviewsByUserid(String user_id) throws Exception;
 
-    @Select(value = "SELECT * FROM review WHERE content_id = #{content_id}")
-    List<ReviewDto> getReviewsByContentId(String content_id) throws Exception;
+    @Select(value = "SELECT review_id, review_text, content_id, likes FROM review WHERE content_id = #{content_id}")
+    List<ResponseReviewDto> getReviewsByContentId(String content_id) throws Exception;
 
     @Update(value = "UPDATE review set review_text = #{text}, update_time = now() WHERE review_id = #{review_id} ")
     void update(String text, int review_id);
