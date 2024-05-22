@@ -38,6 +38,7 @@ public class ReviewServiceImpl implements ReviewService{
         reviewDao.update(text, review_id);
     }
 
+    // 자르기
     @Override
     public String getIdByContent_id(String content_id) {
         return reviewDao.getIdByContent_id(content_id);
@@ -65,15 +66,25 @@ public class ReviewServiceImpl implements ReviewService{
         int idx = 0;
 
         result.add(new ResponseReviewDto[10]);
+
         for (ResponseReviewDto review : reviews) {
-            result.get(listIdx)[idx] = review;
-            if(++idx == 10) {
+            if(idx == 10) {
                 idx = 0;
                 result.add(new ResponseReviewDto[10]);
                 listIdx++;
             }
+            result.get(listIdx)[idx] = review;
+            idx++;
+
         }
-        System.out.println(result);
+        for(int i = 0; i < result.size(); i ++){
+            for(int j = 0; j < result.get(i).length; j++){
+                if(result.get(i)[j] != null){
+                    System.out.println(result.get(i)[j]);
+                }
+            }
+
+        }
 
         return result;
     }

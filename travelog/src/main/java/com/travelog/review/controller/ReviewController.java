@@ -223,6 +223,7 @@ public class ReviewController {
             try{
                 String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
                 List<ResponseReviewDto[]> list = reviewServiceImpl.getReviewLikeByUserid(userid);
+                System.out.println(list.size());
                 result.put("message", "SUCCESS");
                 result.put("liked reviews", list);
                 status = HttpStatus.OK;

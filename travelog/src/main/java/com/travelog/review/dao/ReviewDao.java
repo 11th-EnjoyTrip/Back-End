@@ -30,12 +30,16 @@ public interface ReviewDao {
     @Select(value = "SELECT userid FROM review WHERE review_id = #{review_id}")
     String getIdByReview_id(int review_id);
 
-    @Select(value = "SELECT a.review_id, a.review_text, a.content_id " +
+    @Select(value = "SELECT a.review_id, a.review_text, a.content_id, a.likes " +
             "FROM review as a join review_like as b on a.review_id " +
-            "WHERE a.userid = #{userid}")
+            "WHERE a.userid = #{userid} " +
+            "GROUP BY review_id " +
+            "ORDER BY a.likes DESC ;"
+
+    )
     List<ResponseReviewDto> getResponseReviewsByUserid(String review_id);
 
-    @Select(value = "SELECT a.content_id, a.review_id, a.review_text, a.content_id " +
+    @Select(value = "SELECT a.content_id, a.review_id, a.review_text, a.content_id, a.likes " +
             "FROM review as a join review_like as b ON a.review_id = b.review_id " +
             "WHERE a.userid = #{userid};")
     List<ResponseReviewDto> getReviewLikeByUserid(String userid) throws SQLException;

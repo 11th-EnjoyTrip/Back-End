@@ -8,4 +8,5 @@ public class ResponseReviewDto {
     private int review_id;
     private String review_text;
     private int content_id;
+    private int likes;
 }
