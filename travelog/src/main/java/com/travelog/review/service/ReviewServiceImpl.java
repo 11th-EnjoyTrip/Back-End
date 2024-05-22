@@ -1,7 +1,7 @@
 package com.travelog.review.service;
 
-import com.travelog.member.service.MemberServiceImpl;
 import com.travelog.review.dao.ReviewDao;
+import com.travelog.review.dto.LikedReviewDto;
 import com.travelog.review.dto.ResponseReviewDto;
 import com.travelog.review.dto.ReviewDto;
 import com.travelog.review.dto.ReviewLikeDto;
@@ -72,6 +72,29 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<ReviewDto> getTopReview() throws SQLException {
         return reviewDao.getTopReview();
+    }
+
+    @Override
+    public List<LikedReviewDto[]> getLikedReviewsByUserid(String userid, String content_id) {
+        List<LikedReviewDto[]> result = new ArrayList<>();
+        List<LikedReviewDto> reviews = reviewDao.getLikedReviewsByUserid(userid,content_id);
+
+        int listIdx = 0;
+        int idx = 0;
+
+        result.add(new LikedReviewDto[10]);
+
+        for (LikedReviewDto review : reviews) {
+            if (idx == 10) {
+                idx = 0;
+                result.add(new LikedReviewDto[10]);
+                listIdx++;
+            }
+            result.get(listIdx)[idx] = review;
+            idx++;
+
+        }
+        return result;
     }
 
     @Override

@@ -19,10 +19,4 @@ public class MemberDto implements Serializable {
     private String nickname;
     private String role;
     private String token;
-
-    public MemberDto(String userid, String username, String nickname) {
-        this.userid = userid;
-        this.username = username;
-        this.nickname = nickname;
-    }
 }

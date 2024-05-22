@@ -1,5 +1,6 @@
 package com.travelog.review.service;
 
+import com.travelog.review.dto.LikedReviewDto;
 import com.travelog.review.dto.ResponseReviewDto;
 import com.travelog.review.dto.ReviewDto;
 import com.travelog.review.dto.ReviewLikeDto;
@@ -20,6 +21,7 @@ public interface ReviewService {
     List<ResponseReviewDto[]> getReviewLikeByUserid(String userid) throws Exception;
     List<ResponseReviewDto> getResponseReviewsByUserid(String user_id) throws Exception;
     List<ReviewDto> getTopReview() throws SQLException;
+    List<LikedReviewDto[]> getLikedReviewsByUserid(String userid, String content_id);
 
     String getIdByReview_id(int review_id);
     String getIdByContent_id(String content_id);
