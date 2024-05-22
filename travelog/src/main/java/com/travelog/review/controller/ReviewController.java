@@ -229,7 +229,7 @@ public class ReviewController {
     }
 
     // 내가 좋아요 누른 리뷰
-    @PostMapping("/liked")
+    @GetMapping("/liked")
     public ResponseEntity<?> liked(HttpServletRequest request) throws Exception {
         Map<String, Object> result = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
