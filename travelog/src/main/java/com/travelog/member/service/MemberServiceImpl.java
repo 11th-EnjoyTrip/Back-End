@@ -100,6 +100,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public ResponseMemberDto login(MemberDto memberDto) throws SQLException {
+
+        // 1. id String id = service.getId();
+                            // throws validateID;
+        // 핸들러
+
+        // 2. pwd
         return memberDao.login(memberDto);
     }
 

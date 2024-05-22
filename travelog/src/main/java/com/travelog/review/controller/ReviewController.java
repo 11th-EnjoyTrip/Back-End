@@ -2,6 +2,7 @@ package com.travelog.review.controller;
 
 import com.travelog.member.service.MemberServiceImpl;
 import com.travelog.member.util.JWTUtil;
+import com.travelog.review.dto.MyPageReviewDto;
 import com.travelog.review.dto.ResponseReviewDto;
 import com.travelog.review.dto.ReviewDto;
 import com.travelog.review.dto.UpdateReviewDto;
@@ -62,19 +63,33 @@ public class ReviewController {
 
     // 관광지 리뷰 확인
     @GetMapping("/read/{content_id}")
-    public ResponseEntity<?> read(@PathVariable String content_id) throws Exception {
+    public ResponseEntity<?> read(@PathVariable String content_id, HttpServletRequest request) throws Exception {
         Map<String, Object> result = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        try {
-            List<ResponseReviewDto[]> list = reviewService.getReviewsByContentId(content_id);
-            result.put("message", "SUCCESS");
-            result.put("reviews", list);
-            status = HttpStatus.OK;
+        if(jwtUtil.checkToken(request.getHeader("Authorization"))) {
+            try {
+                List<MyPageReviewDto[]> list = reviewService.getReviewsByContentId(content_id);
+                result.put("message", "SUCCESS");
+                result.put("reviews", list);
+                status = HttpStatus.OK;
 
-        } catch (Exception e) {
-            result.put("message", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            } catch (Exception e) {
+                result.put("message", e.getMessage());
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }else{
+            try {
+                List<ResponseReviewDto[]> list = reviewService.getResponseReviewsByContentId(content_id);
+                result.put("message", "SUCCESS");
+                result.put("reviews", list);
+                status = HttpStatus.OK;
+
+            } catch (Exception e) {
+                result.put("message", e.getMessage());
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
         }
+
 
         return new ResponseEntity<>(result, status);
     }
@@ -86,9 +101,8 @@ public class ReviewController {
         HttpStatus status = HttpStatus.ACCEPTED;
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
-
                 String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
-                List<ReviewDto> list = reviewService.getReviewsByUserid(userid);
+                List<MyPageReviewDto[]> list = reviewService.getReviewsByUserid(userid);
                 result.put("message", "SUCCESS");
                 result.put("data", list);
                 status = HttpStatus.OK;
@@ -222,7 +236,7 @@ public class ReviewController {
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try{
                 String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
-                List<ResponseReviewDto[]> list = reviewServiceImpl.getReviewLikeByUserid(userid);
+                List<MyPageReviewDto[]> list = reviewServiceImpl.getReviewLikeByUserid(userid);
                 System.out.println(list.size());
                 result.put("message", "SUCCESS");
                 result.put("liked reviews", list);
