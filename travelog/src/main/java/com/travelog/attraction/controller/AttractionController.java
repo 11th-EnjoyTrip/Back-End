@@ -28,7 +28,7 @@ public class AttractionController {
     // 관광지 카테고리,지역,키워드별 조회(페이지네이션)
     @GetMapping("")
     public ResponseEntity<?> getAttractionList(@ModelAttribute AttractionRequestDto attractionRequestDto, @PageableDefault(size=20) Pageable pageable, HttpServletRequest request) {
-        // # request에 토큰 값 있는지 체크(로그인한 회원 인지 비회원이지 확인)
+        // # request에 토큰 값 있는지 체크(로그인한 회원 인지 비회원인지 확인)
         // 비회원인 경우
         if(request.getHeader("Authorization").equals("")) {
             try{
@@ -71,6 +71,24 @@ public class AttractionController {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         }
+    }
+
+    // TODO : 좋아요 누른 관광지 리스트 조회
+    @GetMapping("/like")
+    public ResponseEntity<?> getLikeAttractionList(@PageableDefault(size=20) Pageable pageable, HttpServletRequest request) {
+        // # request에 토큰 값 있는지 체크(로그인한 회원 인지 비회원인지 확인)
+        // 회원인 경우에만 조회되도록 구현
+        if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
+            try{
+                String id=  jwtUtil.getUserId(request.getHeader("Authorization"));
+                return ResponseEntity.ok(attractionService.getLikeAttractionList(pageable,id).getContent()) ;
+            }catch (Exception e){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("SERVER ERROR");
+            }
+        }else{
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
     }
 
     //관광지 좋아요 등록
