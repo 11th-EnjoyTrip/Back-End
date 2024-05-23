@@ -6,7 +6,9 @@ import com.travelog.attraction.service.AttractionService;
 import com.travelog.member.util.JWTUtil;
 import com.travelog.plan.dto.PlanLikeRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +29,14 @@ public class AttractionController {
 
     // 관광지 카테고리,지역,키워드별 조회(페이지네이션)
     @GetMapping("")
-    public ResponseEntity<?> getAttractionList(@ModelAttribute AttractionRequestDto attractionRequestDto, @PageableDefault(size=20) Pageable pageable, HttpServletRequest request) {
+    public ResponseEntity<?> getAttractionList(@ModelAttribute AttractionRequestDto attractionRequestDto, @PageableDefault(size=20) Pageable pageable,
+                                               @RequestParam(required = false) String sort,HttpServletRequest request) {
+
         // # request에 토큰 값 있는지 체크(로그인한 회원 인지 비회원인지 확인)
         // 비회원인 경우
         if(request.getHeader("Authorization").equals("")) {
             try{
-                return ResponseEntity.ok(attractionService.getAttractionList(attractionRequestDto, pageable,null).getContent()) ;
+                return ResponseEntity.ok(attractionService.getAttractionList(attractionRequestDto, pageable,null,sort).getContent()) ;
             }catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("SERVER ERROR");
             }
@@ -40,7 +44,7 @@ public class AttractionController {
             if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
                 try{
                     String id=  jwtUtil.getUserId(request.getHeader("Authorization"));
-                    return ResponseEntity.ok(attractionService.getAttractionList(attractionRequestDto, pageable,id).getContent()) ;
+                    return ResponseEntity.ok(attractionService.getAttractionList(attractionRequestDto, pageable,id,sort).getContent()) ;
                 }catch (Exception e){
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("SERVER ERROR");
                 }

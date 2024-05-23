@@ -58,13 +58,14 @@ public class PlanController {
 
     //여행 계획 리스트 조회 ( 공유한 리스트만 조회 ) (GET)
     @GetMapping("/shared")
-    public ResponseEntity<?> getSharedTripPlans(@RequestParam String keyword,@PageableDefault(size=6) Pageable pageable,HttpServletRequest request) {
+    public ResponseEntity<?> getSharedTripPlans(@RequestParam String keyword,@PageableDefault(size=6) Pageable pageable,
+                                                @RequestParam(required = false) String sort,HttpServletRequest request) {
 
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
                 String id = jwtUtil.getUserId(request.getHeader("Authorization"));
                 // 공유된 리스트 조회
-                Page<Map<String, Object>> sharedPlans = planService.getSharedPlanList(pageable, id,keyword);
+                Page<Map<String, Object>> sharedPlans = planService.getSharedPlanList(pageable, id,keyword,sort);
                 return new ResponseEntity<>(sharedPlans.getContent(), HttpStatus.OK);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
