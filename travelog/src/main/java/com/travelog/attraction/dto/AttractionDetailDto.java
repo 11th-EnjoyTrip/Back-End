@@ -14,7 +14,7 @@ public class AttractionDetailDto {
     private String title;
     private String addr1;
     private String addr2;
-    private Long zipcode;
+    private String zipcode;
     private String tel;
     private Boolean isLikedAttraction;
     private String firstImage;
