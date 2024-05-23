@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "board")
-@CrossOrigin(origins = "*", allowedHeaders = "Authorization")
+@CrossOrigin(origins = "*", allowedHeaders = {"Authorization", "refreshToken", "Content-Type"})
 public class BoardController {
     private static final String SUCCESS = "success";
     private final BoardService boardService;
