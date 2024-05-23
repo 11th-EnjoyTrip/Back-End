@@ -81,7 +81,6 @@ public class MemberServiceImpl implements MemberService {
 
         List<ResponseReviewDto[]> result = new ArrayList<>();
         List<ResponseReviewDto> reviews = memberDao.getReviewLikeByUserid(userid);
-        System.out.println("결과로 받아온 리뷰 개수 : " + reviews.size());
         int listIdx = 0;
         int idx = 0;
 
