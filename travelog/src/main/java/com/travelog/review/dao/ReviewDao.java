@@ -70,11 +70,12 @@ public interface ReviewDao {
             "(select a.title, b.review_id, b.userid, b.content_id, b.nickname, b.likes, b.update_time, b.review_text " +
             "from attraction_info as a join review as b on a.content_id = b.content_id) as c " +
             "LEFT JOIN review_like AS b " +
-            "ON c.userid = b.userid AND c.review_id = b.review_id AND b.userid = '김정인' " +
-            "WHERE c.content_id = 125266 AND c.userid = '김정인' " +
+            "ON c.userid = b.userid AND c.review_id = b.review_id AND b.userid = #{content_id} " +
+            "WHERE c.content_id = 125266 AND c.userid = #{content_id} " +
             "GROUP BY c.review_id " +
             "ORDER BY likes DESC;")
-    List<MyPageReviewDto> getMyPageReviewsByContentId(String content_id);
+    List<MyPageReviewDto> getMyPageReviewsByContentId(@Param("content_id") String content_id);
+
 
     // 수정
     @Select(value = "SELECT " +
@@ -84,9 +85,9 @@ public interface ReviewDao {
             "(select a.title, b.review_id, b.userid, b.content_id, b.nickname, b.likes, b.update_time, b.review_text " +
             "from attraction_info as a join review as b on a.content_id = b.content_id) as c " +
             "LEFT JOIN review_like AS b " +
-            "ON c.userid = b.userid AND c.review_id = b.review_id AND b.userid = '김정인' " +
-            "WHERE c.content_id = 125266 AND c.userid = '김정인' " +
+            "ON c.userid = b.userid AND c.review_id = b.review_id AND b.userid = #{userid} " +
+            "WHERE c.content_id = 125266 AND c.userid = #{userid} " +
             "GROUP BY c.review_id " +
             "ORDER BY likes DESC;")
-    List<MyPageReviewDto> getReviewsByUserid(String user_id) throws Exception;
+    List<MyPageReviewDto> getReviewsByUserid(@Param("userid")String userid) throws Exception;
 }
