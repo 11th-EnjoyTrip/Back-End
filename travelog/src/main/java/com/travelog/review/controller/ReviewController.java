@@ -128,9 +128,6 @@ public class ReviewController {
         if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
             try {
                 String userid = jwtUtil.getUserId(request.getHeader("Authorization"));
-                System.out.println("UserId : " + userid);
-                System.out.println("TEXT : " + updateReviewDto.getText());
-                System.out.println("content_id : " + updateReviewDto.getReview_id());
                 String writer = reviewService.getIdByReview_id(updateReviewDto.getReview_id());
                 if (userid.equals(writer)) {
                     reviewService.update(updateReviewDto.getText(), updateReviewDto.getReview_id());
