@@ -3,7 +3,7 @@ package com.travelog.review.dto;
 import lombok.Data;
 
 @Data
-public class ResponseReviewDto {
+public class MyPageReviewDto {
     private int review_id;
     private int content_id;
     private String title;
@@ -12,4 +12,5 @@ public class ResponseReviewDto {
     private String update_time;
     private String userid;
     private String nickname;
+    private int checkliked;
 }

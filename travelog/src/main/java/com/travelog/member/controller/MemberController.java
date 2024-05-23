@@ -74,6 +74,7 @@ public class MemberController {
     public ResponseEntity<?> login(@RequestBody MemberDto loginMemberDto) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
+
         try {
             ResponseMemberDto loginUser = memberService.login(loginMemberDto);
             if (loginUser != null) {

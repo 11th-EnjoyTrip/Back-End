@@ -13,5 +13,4 @@ public class ResponseMemberDto implements Serializable {
     private String email;
     private String location;
     private String nickname;
-
 }

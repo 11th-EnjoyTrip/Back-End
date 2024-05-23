@@ -1,7 +1,8 @@
 package com.travelog.review.service;
 
+import com.travelog.member.service.MemberServiceImpl;
 import com.travelog.review.dao.ReviewDao;
-import com.travelog.review.dto.LikedReviewDto;
+import com.travelog.review.dto.MyPageReviewDto;
 import com.travelog.review.dto.ResponseReviewDto;
 import com.travelog.review.dto.ReviewDto;
 import com.travelog.review.dto.ReviewLikeDto;
@@ -27,8 +28,28 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewDto> getReviewsByUserid(String user_id) throws Exception {
-        return reviewDao.getReviewsByUserid(user_id);
+    public List<MyPageReviewDto[]> getReviewsByUserid(String user_id) throws Exception {
+        // pagination;
+//        return reviewDao.getReviewsByUserid(user_id);
+        List<MyPageReviewDto[]> result = new ArrayList<>();
+        List<MyPageReviewDto> reviews = reviewDao.getMyPageReviewsByContentId(user_id);
+
+        int listIdx = 0;
+        int idx = 0;
+
+        result.add(new MyPageReviewDto[10]);
+
+        for (MyPageReviewDto review : reviews) {
+            if (idx == 10) {
+                idx = 0;
+                result.add(new MyPageReviewDto[10]);
+                listIdx++;
+            }
+            result.get(listIdx)[idx] = review;
+            idx++;
+
+        }
+        return result;
     }
 
     @Override
@@ -36,16 +57,10 @@ public class ReviewServiceImpl implements ReviewService {
         reviewDao.update(text, review_id);
     }
 
-    // 자르기
     @Override
-    public String getIdByContent_id(String content_id) {
-        return reviewDao.getIdByContent_id(content_id);
-    }
-
-    @Override
-    public List<ResponseReviewDto[]> getReviewsByContentId(String content_id) throws Exception {
+    public List<ResponseReviewDto[]> getResponseReviewsByContentId(String content_id) throws Exception {
         List<ResponseReviewDto[]> result = new ArrayList<>();
-        List<ResponseReviewDto> reviews = reviewDao.getReviewsByContentId(content_id);
+        List<ResponseReviewDto> reviews = reviewDao.getResponseReviewsByContentId(content_id);
 
         int listIdx = 0;
         int idx = 0;
@@ -65,8 +80,27 @@ public class ReviewServiceImpl implements ReviewService {
         return result;
     }
 
-    public List<ResponseReviewDto> getResponseReviewsByUserid(String user_id) throws Exception {
-        return reviewDao.getResponseReviewsByUserid(user_id);
+    @Override
+    public List<MyPageReviewDto[]> getReviewsByContentId(String content_id) throws Exception {
+        List<MyPageReviewDto[]> result = new ArrayList<>();
+        List<MyPageReviewDto> reviews = reviewDao.getReviewsByContentId(content_id);
+
+        int listIdx = 0;
+        int idx = 0;
+
+        result.add(new MyPageReviewDto[10]);
+
+        for (MyPageReviewDto review : reviews) {
+            if (idx == 10) {
+                idx = 0;
+                result.add(new MyPageReviewDto[10]);
+                listIdx++;
+            }
+            result.get(listIdx)[idx] = review;
+            idx++;
+
+        }
+        return result;
     }
 
     @Override
@@ -75,42 +109,18 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<LikedReviewDto[]> getLikedReviewsByUserid(String userid, String content_id) {
-        List<LikedReviewDto[]> result = new ArrayList<>();
-        List<LikedReviewDto> reviews = reviewDao.getLikedReviewsByUserid(userid,content_id);
-
+    public List<MyPageReviewDto[]> getReviewLikeByUserid(String userid) throws Exception {
+        List<MyPageReviewDto[]> result = new ArrayList<>();
+        List<MyPageReviewDto> reviews = reviewDao.getMyPageReviewsByContentId(userid);
         int listIdx = 0;
         int idx = 0;
 
-        result.add(new LikedReviewDto[10]);
+        result.add(new MyPageReviewDto[10]);
 
-        for (LikedReviewDto review : reviews) {
+        for (MyPageReviewDto review : reviews) {
             if (idx == 10) {
                 idx = 0;
-                result.add(new LikedReviewDto[10]);
-                listIdx++;
-            }
-            result.get(listIdx)[idx] = review;
-            idx++;
-
-        }
-        return result;
-    }
-
-    @Override
-    public List<ResponseReviewDto[]> getReviewLikeByUserid(String userid) throws Exception {
-        List<ResponseReviewDto[]> result = new ArrayList<>();
-        List<ResponseReviewDto> reviews = getResponseReviewsByUserid(userid);
-
-        int listIdx = 0;
-        int idx = 0;
-
-        result.add(new ResponseReviewDto[10]);
-
-        for (ResponseReviewDto review : reviews) {
-            if (idx == 10) {
-                idx = 0;
-                result.add(new ResponseReviewDto[10]);
+                result.add(new MyPageReviewDto[10]);
                 listIdx++;
             }
             result.get(listIdx)[idx] = review;
@@ -132,23 +142,18 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void addLike(int review_id, String userid) {
-        ReviewLikeDto reviewLikeDto = new ReviewLikeDto();
-        reviewLikeDto.setReview_id(review_id);
-        reviewLikeDto.setUserid(userid);
-        reviewDao.addLike(reviewLikeDto);
+        reviewDao.addLike(new ReviewLikeDto(review_id, userid));
         reviewDao.updateLike(review_id);
     }
 
+    @Override
     public void updateLike(int review_id) {
         reviewDao.updateLike(review_id);
     }
 
     @Override
     public void deleteLike(int review_id, String userid) {
-        ReviewLikeDto reviewLikeDto = new ReviewLikeDto();
-        reviewLikeDto.setReview_id(review_id);
-        reviewLikeDto.setUserid(userid);
-        reviewDao.deleteLike(reviewLikeDto);
+        reviewDao.deleteLike(new ReviewLikeDto(review_id , userid));
     }
 
 
