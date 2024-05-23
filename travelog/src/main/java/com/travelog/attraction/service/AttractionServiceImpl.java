@@ -42,6 +42,18 @@ public class AttractionServiceImpl implements  AttractionService{
     }
 
     @Override
+    public Page<Map<String, Object>> getLikeAttractionList(Pageable pageable, String userId) throws Exception {
+        //빌더 패턴으로 data,pageable 파라미터에 데이터 주입
+        RequestList<?> requestList = RequestList.builder()
+                .pageable(pageable)
+                .build();
+
+        List<Map<String,Object>> content = attractionDao.getLikeAttractionList(requestList,userId);
+
+        return new PageImpl<>(content);
+    }
+
+    @Override
     public AttractionDetailDto getAttractionDetail(int contentId,String userId) throws SQLException {
         return attractionDao.getAttractionDetail(contentId,userId);
     }

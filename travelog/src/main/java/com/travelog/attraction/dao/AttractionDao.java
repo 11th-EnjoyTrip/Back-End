@@ -35,6 +35,28 @@ public interface AttractionDao {
             "LIMIT #{requestList.pageable.pageSize} OFFSET #{requestList.pageable.offset}")
     List<Map<String,Object>> getAttractionList(RequestList<?> requestList,String userId) throws SQLException;
 
+    // 좋아요한 리스트 조회
+    @Select("SELECT " +
+            "    ai.content_id AS contentId, content_type_id AS contentTypeId, " +
+            "    CASE " +
+            "        WHEN content_type_id = 12 THEN '관광지' " +
+            "        WHEN content_type_id = 14 THEN '문화시설' " +
+            "        WHEN content_type_id = 15 THEN '축제/공연/행사' " +
+            "        WHEN content_type_id = 28 THEN '레포츠' " +
+            "        WHEN content_type_id = 32 THEN '숙박' " +
+            "        WHEN content_type_id = 38 THEN '쇼핑' " +
+            "        WHEN content_type_id = 39 THEN '음식' " +
+            "        ELSE '기타' " +
+            "    END AS contentTypeName, title, first_image AS firstImage, first_image2 AS firstImage2, " +
+            "    ai.sido_code AS sidoCode, s.sido_name AS sidoName,latitude, longitude,likes, " +
+            "(SELECT COUNT(*) > 0 FROM attraction_like al WHERE al.userid = #{userId} AND ai.content_id = al.content_id) AS isLikedAttraction "+
+            "FROM attraction_info ai " +
+            "JOIN sido s ON ai.sido_code = s.sido_code " +
+            "JOIN attraction_like al ON al.content_id = ai.content_id  " +
+            "WHERE al.userid = #{userId} AND ai.content_id = al.content_id "+
+            "LIMIT #{requestList.pageable.pageSize} OFFSET #{requestList.pageable.offset}")
+    List<Map<String,Object>> getLikeAttractionList(RequestList<?> requestList,String userId) throws SQLException;
+
     @Select("SELECT ai.content_id, content_type_id," +
             "CASE " +
             "    WHEN content_type_id = 12 THEN '관광지' " +
