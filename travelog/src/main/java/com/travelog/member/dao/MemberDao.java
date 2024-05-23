@@ -14,7 +14,7 @@ public interface MemberDao {
 
 
     @Insert(value = "INSERT INTO member (userid, password, username, email, location, nickname, role, token) values (#{userid},#{password},#{username},#{email},#{location}, #{nickname}, '사용자', #{token})")
-    @Options(useGeneratedKeys = true, keyProperty = "no")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void regist(MemberDto member) throws SQLException;
 
     @Update(value = "UPDATE member set token = #{token} where userid = #{userid}")

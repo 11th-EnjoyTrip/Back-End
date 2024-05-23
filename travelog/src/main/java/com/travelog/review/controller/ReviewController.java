@@ -62,22 +62,7 @@ public class ReviewController {
     }
 
     // 비로그인 관광지 리뷰 확인
-//    @GetMapping("/read/{content_id}")
-//    public ResponseEntity<?> read(@PathVariable String content_id) throws Exception {
-//        Map<String, Object> result = new HashMap<>();
-//        HttpStatus status = HttpStatus.ACCEPTED;
-//        try {
-//            List<ResponseReviewDto[]> list = reviewService.getReviewsByContentId(content_id);
-//            result.put("message", "SUCCESS");
-//            result.put("reviews", list);
-//            status = HttpStatus.OK;
-//        } catch (Exception e) {
-//            result.put("message", e.getMessage());
-//            status = HttpStatus.INTERNAL_SERVER_ERROR;
-//        }
-//
-//        return new ResponseEntity<>(result, status);
-//    }
+
     // 로그인 관광지 리뷰 확인
     @GetMapping("/read/{content_id}")
     public ResponseEntity<?> read(@PathVariable String content_id, HttpServletRequest request) throws Exception {
