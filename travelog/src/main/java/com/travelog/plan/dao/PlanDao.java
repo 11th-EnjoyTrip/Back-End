@@ -159,6 +159,44 @@ public interface PlanDao {
             "m.username, " +
             "tp.is_shared AS isShared, "+
             "    tp.status, "+
+            "EXISTS(SELECT 1 FROM plan_like pl WHERE pl.userid = #{requestList.data.userId} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
+            "JSON_ARRAYAGG( " +
+            "JSON_OBJECT( " +
+            "'contentId', dp.content_id, " +
+            "'title', ai.title, " +
+            "'firstImage', ai.first_image, " +
+            "'first_image2',ai.first_image2 "+
+            ")) AS contents " +
+            "FROM " +
+            "trip_plan tp " +
+            "JOIN " +
+            "member m ON tp.userid = m.userid " +
+            "JOIN " +
+            "detail_plan dp ON tp.trip_plan_id = dp.trip_plan_id " +
+            "JOIN " +
+            "attraction_info ai ON dp.content_id = ai.content_id " +
+            "WHERE tp.is_shared = true AND tp.status = true " +
+            "AND tp.title LIKE CONCAT('%', #{requestList.data.keyword}, '%') " +
+            "GROUP BY " +
+            "tp.trip_plan_id " +
+            "ORDER BY ${sort} DESC " +
+            "LIMIT #{requestList.pageable.pageSize} OFFSET #{requestList.pageable.offset}")
+    List<Map<String,Object>> getSharedPlanListOrderBy(RequestList<?> requestList,String sort) throws SQLException;
+
+
+    @Select("SELECT " +
+            "tp.trip_plan_id AS tripPlanId, " +
+            "DATE_FORMAT(tp.start_date, '%Y-%m-%d') AS startDate, " +
+            "DATE_FORMAT(tp.end_date, '%Y-%m-%d') AS endDate, " +
+            "tp.title, " +
+            "tp.intro, " +
+            "tp.likes, " +
+            "DATE_FORMAT(tp.updated_at,'%Y-%m-%d %H:%i:%s') AS updatedAt, " +
+            "tp.userid, " +
+            "m.nickname, " +
+            "m.username, " +
+            "tp.is_shared AS isShared, "+
+            "    tp.status, "+
             "EXISTS(SELECT 1 FROM plan_like pl WHERE pl.userid = #{data} AND tp.trip_plan_id = pl.trip_plan_id) AS isLikedPlan, " +
             "JSON_ARRAYAGG( " +
             "JSON_OBJECT( " +

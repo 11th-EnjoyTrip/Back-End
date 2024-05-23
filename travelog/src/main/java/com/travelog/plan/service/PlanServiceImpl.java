@@ -46,7 +46,7 @@ public class PlanServiceImpl implements PlanService {
     // #2 공유된 여행 계획 리스트만 조회
     @Override
     @Transactional
-    public Page<Map<String, Object>> getSharedPlanList(Pageable pageable,String userid,String keyword) throws SQLException {
+    public Page<Map<String, Object>> getSharedPlanList(Pageable pageable,String userid,String keyword,String sort) throws SQLException {
 
         //빌더 패턴으로 data,pageable 파라미터에 데이터 주입
         RequestList<?> requestList = RequestList.builder()
@@ -55,7 +55,12 @@ public class PlanServiceImpl implements PlanService {
                 .pageable(pageable)
                 .build();
 
-        List<Map<String,Object>> content = planDao.getSharedPlanList(requestList);
+        List<Map<String,Object>> content = null;
+        if(sort == null || sort == ""){
+            content = planDao.getSharedPlanList(requestList);
+        }else{
+            content = planDao.getSharedPlanListOrderBy(requestList,sort);
+        }
 
         return new PageImpl<>(content);
     }

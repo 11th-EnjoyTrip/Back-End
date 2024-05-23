@@ -28,7 +28,7 @@ public class AttractionServiceImpl implements  AttractionService{
     }
 
     @Override
-    public Page<Map<String, Object>> getAttractionList(AttractionRequestDto attractionRequestDto, Pageable pageable,String userId) throws Exception {
+    public Page<Map<String, Object>> getAttractionList(AttractionRequestDto attractionRequestDto, Pageable pageable,String userId,String sort) throws Exception {
 
         //빌더 패턴으로 data,pageable 파라미터에 데이터 주입
         RequestList<?> requestList = RequestList.builder()
@@ -36,7 +36,12 @@ public class AttractionServiceImpl implements  AttractionService{
                 .pageable(pageable)
                 .build();
 
-        List<Map<String,Object>> content = attractionDao.getAttractionList(requestList,userId);
+        List<Map<String,Object>> content = null;
+        if(sort == null || sort == ""){
+            content = attractionDao.getAttractionList(requestList,userId);
+        }else{
+            content = attractionDao.getAttractionListOrderBy(requestList,userId,sort);
+        }
 
         return new PageImpl<>(content);
     }

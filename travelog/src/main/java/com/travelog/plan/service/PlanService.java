@@ -13,7 +13,7 @@ import java.util.Map;
 @Service
 public interface PlanService {
     void insertPlan(PlanRequestDto planRequestDto,String userId) throws SQLException;
-    Page<Map<String, Object>> getSharedPlanList(Pageable pageable,String userid,String keyword) throws SQLException;
+    Page<Map<String, Object>> getSharedPlanList(Pageable pageable,String userid,String keyword,String sort) throws SQLException;
     Page<Map<String, Object>> getLikeTripPlans(String userId,Pageable pageable) throws SQLException;
     Page<Map<String, Object>> getMyTripPlans(String userId,Pageable pageable) throws SQLException;
 
